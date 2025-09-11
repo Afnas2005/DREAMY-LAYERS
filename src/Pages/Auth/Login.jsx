@@ -16,7 +16,8 @@ export default function Login({ setIsAuthenticated }) {
   const [forgotMsg, setForgotMsg] = useState("");
   const navigate = useNavigate();
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,12 +25,27 @@ export default function Login({ setIsAuthenticated }) {
     setForgotMsg("");
 
     try {
+      // 🔑 Check login against db.json (users + admins)
       const res = await axios.get(
         `http://localhost:3001/users?email=${form.email}&password=${form.password}`
       );
 
       if (res.data.length > 0) {
         const user = res.data[0];
+
+        // ✅ If role = admin → admin dashboard
+        if (user.role === "admin") {
+          setSubmitted(true);
+          setIsAuthenticated(true);
+          localStorage.setItem("isAuthenticated", "true");
+          localStorage.setItem("user", JSON.stringify(user));
+          setCurrentUser(user);
+
+          setTimeout(() => navigate("/admin"), 1000);
+          return;
+        }
+
+        // ✅ Normal user
         setSubmitted(true);
         setIsAuthenticated(true);
         localStorage.setItem("isAuthenticated", "true");
@@ -50,9 +66,13 @@ export default function Login({ setIsAuthenticated }) {
     setForgotMsg("");
 
     try {
-      const res = await axios.get(`http://localhost:3001/users?email=${forgotEmail}`);
+      const res = await axios.get(
+        `http://localhost:3001/users?email=${forgotEmail}`
+      );
       if (res.data.length > 0) {
-        setForgotMsg("✅ Password reset link has been sent to your email (mock).");
+        setForgotMsg(
+          "✅ Password reset link has been sent to your email (mock)."
+        );
       } else {
         setForgotMsg("❌ No account found with this email.");
       }
@@ -98,12 +118,17 @@ export default function Login({ setIsAuthenticated }) {
             {forgotMode ? "Forgot Password 🔑" : "Welcome Back 🍰"}
           </h2>
           <p className="mt-2 text-sm text-gray-500 animate-fade-in-up delay-100">
-            {forgotMode ? "We'll help you reset your password" : "Sign in to continue to your account"}
+            {forgotMode
+              ? "We'll help you reset your password"
+              : "Sign in to continue to your account"}
           </p>
         </div>
 
         {!forgotMode ? (
-          <form onSubmit={handleSubmit} className="space-y-6 mt-8 animate-fade-in-up delay-200">
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-6 mt-8 animate-fade-in-up delay-200"
+          >
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Mail className="h-5 w-5 text-pink-500" />
@@ -143,18 +168,12 @@ export default function Login({ setIsAuthenticated }) {
 
             {error && (
               <div className="animate-shake bg-red-50 text-red-600 p-3 rounded-xl border border-red-200 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
                 <span>{error}</span>
               </div>
             )}
-            
+
             {submitted && (
               <div className="animate-fade-in bg-green-50 text-green-600 p-3 rounded-xl border border-green-200 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
                 <span>✅ Login successful! Redirecting...</span>
               </div>
             )}
@@ -165,11 +184,7 @@ export default function Login({ setIsAuthenticated }) {
             >
               <span className="relative z-10 flex items-center justify-center">
                 Log in
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
               </span>
-              <div className="absolute inset-0 h-full w-full scale-x-[2.0] blur-lg transition-all duration-500 group-hover:scale-0 group-hover:opacity-0 group-hover:blur-xl bg-white/30"></div>
             </button>
 
             <div className="flex justify-between text-sm mt-4">
@@ -178,25 +193,22 @@ export default function Login({ setIsAuthenticated }) {
                 onClick={() => setForgotMode(true)}
                 className="text-pink-600 hover:text-pink-800 transition-colors duration-200 flex items-center"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                </svg>
                 Forgot password?
               </button>
-              <Link to="/register" className="text-purple-600 hover:text-purple-800 transition-colors duration-200 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
-                </svg>
+              <Link
+                to="/register"
+                className="text-purple-600 hover:text-purple-800 transition-colors duration-200 flex items-center"
+              >
                 Create account
               </Link>
             </div>
           </form>
         ) : (
-          <form onSubmit={handleForgotSubmit} className="space-y-6 mt-8 animate-fade-in-up delay-200">
+          <form
+            onSubmit={handleForgotSubmit}
+            className="space-y-6 mt-8 animate-fade-in-up delay-200"
+          >
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-pink-500" />
-              </div>
               <input
                 type="email"
                 value={forgotEmail}
@@ -206,19 +218,9 @@ export default function Login({ setIsAuthenticated }) {
                 required
               />
             </div>
-            
+
             {forgotMsg && (
-              <div className={`animate-fade-in p-3 rounded-xl border flex items-center ${
-                forgotMsg.includes("✅") 
-                  ? "bg-green-50 text-green-600 border-green-200" 
-                  : "bg-red-50 text-red-600 border-red-200"
-              }`}>
-                <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 mr-2 ${forgotMsg.includes("✅") ? "text-green-500" : "text-red-500"}`} viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d={forgotMsg.includes("✅") 
-                    ? "M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" 
-                    : "M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"} 
-                    clipRule="evenodd" />
-                </svg>
+              <div className="animate-fade-in p-3 rounded-xl border flex items-center">
                 <span>{forgotMsg}</span>
               </div>
             )}
@@ -227,24 +229,14 @@ export default function Login({ setIsAuthenticated }) {
               type="submit"
               className="w-full relative overflow-hidden bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-xl py-4 font-semibold shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 group"
             >
-              <span className="relative z-10 flex items-center justify-center">
-                Send Reset Link
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                </svg>
-              </span>
-              <div className="absolute inset-0 h-full w-full scale-x-[2.0] blur-lg transition-all duration-500 group-hover:scale-0 group-hover:opacity-0 group-hover:blur-xl bg-white/30"></div>
+              Send Reset Link
             </button>
-            
+
             <button
               type="button"
               onClick={() => setForgotMode(false)}
               className="w-full text-gray-600 hover:text-gray-800 mt-2 transition-colors duration-200 flex items-center justify-center py-3 rounded-xl border border-gray-200 hover:border-gray-300"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
-              </svg>
               Back to Login
             </button>
           </form>
@@ -255,15 +247,6 @@ export default function Login({ setIsAuthenticated }) {
         @keyframes float {
           0%, 100% { transform: translateY(0) rotate(0deg); }
           50% { transform: translateY(-20px) rotate(5deg); }
-        }
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-          20%, 40%, 60%, 80% { transform: translateX(5px); }
-        }
-        @keyframes bounce-slow {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-15px); }
         }
         .animate-float {
           animation: float 8s ease-in-out infinite;

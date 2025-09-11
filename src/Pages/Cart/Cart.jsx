@@ -1,18 +1,34 @@
-import React from "react";
-import { useCart } from "../../Context/cartContext";
-import { useNavigate } from "react-router-dom";
+import React, { useContext } from "react";
+import { CartContext } from "../../Context/cartContext";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Cart() {
-  const { cart, removeFromCart, increaseQuantity, decreaseQuantity } = useCart();
+  const { cart, removeFromCart, increaseQuantity, decreaseQuantity } = useContext(CartContext);
   const navigate = useNavigate();
+  
+ 
+  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+
+  if (!isAuthenticated) {
+    return (
+      <div className="p-6 min-h-[60vh] flex flex-col items-center justify-center animate-fade-in">
+        <h2 className="text-3xl font-bold mb-4 text-pink-600">Your Cart</h2>
+        <p className="text-gray-600 text-lg mb-4">Please log in to view your cart.</p>
+        <Link 
+          to="/login" 
+          className="bg-gradient-to-r from-pink-500 to-pink-600 text-white px-6 py-2 rounded-full font-medium shadow-md hover:scale-105 transform transition-all duration-300"
+        >
+          Login Now
+        </Link>
+      </div>
+    );
+  }
 
   if (!cart || cart.length === 0) {
     return (
       <div className="p-6 min-h-[60vh] flex flex-col items-center justify-center animate-fade-in">
         <h2 className="text-3xl font-bold mb-4 text-pink-600">Your Cart</h2>
         <p className="text-gray-600 text-lg">Your cart is empty 🛒</p>
-        <div className="mt-6">
-        </div>
       </div>
     );
   }
@@ -21,6 +37,21 @@ export default function Cart() {
 
   const handleCheckout = () => {
     navigate("/payment"); 
+  };
+
+  const handleQuantityChange = (id, action) => {
+    if (!isAuthenticated) return;
+    
+    if (action === "increase") {
+      increaseQuantity(id);
+    } else if (action === "decrease") {
+      decreaseQuantity(id);
+    }
+  };
+
+  const handleRemoveItem = (id) => {
+    if (!isAuthenticated) return;
+    removeFromCart(id);
   };
 
   return (
@@ -46,14 +77,14 @@ export default function Cart() {
                 <p className="text-pink-600 font-bold text-lg">${item.price}</p>
                 <div className="flex items-center gap-2 mt-2">
                   <button
-                    onClick={() => decreaseQuantity(item.id)}
+                    onClick={() => handleQuantityChange(item.id, "decrease")}
                     className="px-3 py-1 bg-gray-200 rounded-full hover:bg-gray-300 transition"
                   >
                     -
                   </button>
                   <span className="font-medium">{item.quantity}</span>
                   <button
-                    onClick={() => increaseQuantity(item.id)}
+                    onClick={() => handleQuantityChange(item.id, "increase")}
                     className="px-3 py-1 bg-gray-200 rounded-full hover:bg-gray-300 transition"
                   >
                     +
@@ -67,7 +98,7 @@ export default function Cart() {
                 ${(item.price * item.quantity).toFixed(2)}
               </p>
               <button
-                onClick={() => removeFromCart(item.id)}
+                onClick={() => handleRemoveItem(item.id)}
                 className="px-4 py-1 text-white bg-red-500 rounded-full hover:bg-red-600 shadow-md transition transform hover:scale-105"
               >
                 Remove

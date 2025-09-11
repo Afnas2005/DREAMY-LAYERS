@@ -2,26 +2,33 @@
   "users": [
     {
       "id": "1",
-      "email": "test@example.com",
-      "password": "123456"
+      "name": "Admin",
+      "email": "admin@example.com",
+      "password": "admin123",
+      "role": "admin"
     },
     {
       "id": "f1d9",
       "name": "afnas",
       "email": "afnasappu2005@gmail.com",
-      "password": "afnasappu2005@gmail.com"
+      "password": "afnasappu2005@gmail.com",
+      "blocked": false,
+      "active": false
     },
     {
       "id": "74d2",
       "name": "nandhu",
       "email": "nandhanakv238@gmail.com",
-      "password": "nandhanakv238@gmail.com"
+      "password": "nandhanakv238@gmail.com",
+      "active": false,
+      "blocked": true
     },
     {
       "id": "dbd9",
       "name": "akhila",
       "email": "akhilabalan273@gmail.com",
-      "password": "akhilabalan273@gmail.com"
+      "password": "akhilabalan273@gmail.com",
+      "blocked": true
     },
     {
       "id": "6280",
@@ -33,7 +40,9 @@
       "id": "0a2b",
       "name": "nishad",
       "email": "nishad@gmail.com",
-      "password": "nishad@gmail.com"
+      "password": "nishad@gmail.com",
+      "active": false,
+      "blocked": false
     },
     {
       "id": "e3b7",
@@ -62,18 +71,20 @@
   ],
   "products": [
     {
-      "id": "1",
       "name": "Chocolate Cake",
-      "price": 49,
+      "price": "49",
+      "description": "",
       "image": "https://i.pinimg.com/1200x/7d/9a/66/7d9a667c68efa58de365718d5e88b6b8.jpg",
-      "category": "Cake"
+      "category": "Cake",
+      "id": "1"
     },
     {
-      "id": "2",
       "name": "Red Velvet Cake",
-      "price": 49,
-      "image": "https://i.pinimg.com/1200x/11/13/f1/1113f1f60919fac7f5bdf63a6c4bca9c.jpg",
-      "category": "Cake"
+      "price": "49",
+      "description": "",
+      "image": "https://i.pinimg.com/736x/bc/2e/a7/bc2ea73f5426abcb9d6387784f9ac730.jpg",
+      "category": "Cake",
+      "id": "2"
     },
     {
       "id": "3",
@@ -186,6 +197,22 @@
       "price": 69,
       "image": "https://i.pinimg.com/1200x/c2/25/b7/c225b7d3e159de53ec96cdd1f764fd72.jpg",
       "category": "Drinks"
+    },
+    {
+      "id": "19",
+      "name": "Mango Chilled Shake",
+      "price": "69",
+      "description": "",
+      "image": "https://i.pinimg.com/1200x/66/fd/74/66fd74298180b44e33ec93224bc85490.jpg",
+      "category": "Drinks"
+    },
+    {
+      "id": "125a",
+      "name": "white forest",
+      "price": 60,
+      "description": "",
+      "image": "",
+      "category": "Cake"
     }
   ]
 }
