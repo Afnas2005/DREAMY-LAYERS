@@ -9,7 +9,7 @@ import Cart from "./Pages/Cart/Cart";
 import Order from "./Pages/Order/Order";
 import Wishlist from "./Pages/Whishlist/Whishlist";
 import Payment from "./Pages/Payment/Payment";
-import ProtectedRoute from './components/ProtectedRoute';   
+import ProtectedRoute from './Components/ProtectedRoute';   
 import { Toaster } from "react-hot-toast";
 import Navbar from "./Components/Navbar";
 import { CartProvider } from "./Context/CartContext"; 

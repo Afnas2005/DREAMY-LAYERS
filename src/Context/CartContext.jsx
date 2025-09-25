@@ -11,7 +11,7 @@ export const CartProvider = ({ children }) => {
   const [orders, setOrders] = useState([]); 
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState(null);
-
+  
   
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
