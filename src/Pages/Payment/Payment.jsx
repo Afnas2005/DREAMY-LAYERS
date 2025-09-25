@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "../../Context/cartContext";
+import { useCart } from "../../Context/CartContext";
 import toast from "react-hot-toast";
 
 export default function Payment() {

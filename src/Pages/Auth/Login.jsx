@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { Cake, Eye, EyeOff, Sparkles, Heart, Lock, Mail } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import { CartContext } from "../../Context/cartContext";
+import { CartContext } from "../../Context/CartContext";
 
 export default function Login({ setIsAuthenticated }) {
   const { setCurrentUser } = useContext(CartContext);

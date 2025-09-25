@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { CartContext } from "../../Context/cartContext";
+import { CartContext } from "../../Context/CartContext";
 import { Link } from "react-router-dom";
 
 export default function Wishlist() {

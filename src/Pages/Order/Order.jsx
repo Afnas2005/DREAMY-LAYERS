@@ -1,5 +1,5 @@
 import React from "react";
-import { useCart } from "../../Context/cartContext";
+import { useCart } from "../../Context/CartContext";
 
 export default function Order() {
   const { orders } = useCart(); 

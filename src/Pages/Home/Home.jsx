@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Cake, IceCream2, Truck, Heart, ShoppingCart, Star, ArrowRight, Plus, ChevronRight, Clock, Shield, Award, Users, Smile } from "lucide-react";
 import Footer from "../../Components/Footer";
-import { CartContext } from "../../Context/cartContext";
+import { CartContext } from "../../Context/CartContext";
 
 const Home = ({ isAuthenticated, setIsAuthenticated }) => {
   const navigate = useNavigate();

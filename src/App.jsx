@@ -12,7 +12,7 @@ import Payment from "./Pages/Payment/Payment";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
 import Navbar from "./Components/Navbar";
-import { CartProvider } from "./Context/cartContext"; 
+import { CartProvider } from "./Context/CartContext"; 
 
 // Admin pages
 import AdminDashboard from "./Pages/Admin/Dashboard";

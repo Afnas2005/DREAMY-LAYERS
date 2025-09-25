@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { CartContext } from "../Context/cartContext";
+import { CartContext } from "../Context/CartContext";
 import {
   Menu,
   X,
