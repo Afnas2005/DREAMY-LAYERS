@@ -15,10 +15,10 @@ export default function UserDetails() {
       try {
         setLoading(true);
         
-        const userResponse = await axios.get(`http://localhost:3001/users/${id}`);
+        const userResponse = await axios.get(`http://localhost:5001/api/users/${id}`);
         setUser(userResponse.data);
 
-        const ordersResponse = await axios.get(`http://localhost:3001/orders`);
+        const ordersResponse = await axios.get(`http://localhost:5001/api/orders`);
         
         const userOrders = ordersResponse.data.filter(order => 
           order.userId === id || order.userId === parseInt(id) || 

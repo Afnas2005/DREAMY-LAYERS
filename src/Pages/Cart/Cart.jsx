@@ -5,8 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 export default function Cart() {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity } = useContext(CartContext);
   const navigate = useNavigate();
-  
- 
+
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
 
   if (!isAuthenticated) {
@@ -14,8 +13,8 @@ export default function Cart() {
       <div className="p-6 min-h-[60vh] flex flex-col items-center justify-center animate-fade-in">
         <h2 className="text-3xl font-bold mb-4 text-pink-600">Your Cart</h2>
         <p className="text-gray-600 text-lg mb-4">Please log in to view your cart.</p>
-        <Link 
-          to="/login" 
+        <Link
+          to="/login"
           className="bg-gradient-to-r from-pink-500 to-pink-600 text-white px-6 py-2 rounded-full font-medium shadow-md hover:scale-105 transform transition-all duration-300"
         >
           Login Now
@@ -36,12 +35,12 @@ export default function Cart() {
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleCheckout = () => {
-    navigate("/payment"); 
+    navigate("/payment");
   };
 
   const handleQuantityChange = (id, action) => {
     if (!isAuthenticated) return;
-    
+
     if (action === "increase") {
       increaseQuantity(id);
     } else if (action === "decrease") {
@@ -63,7 +62,7 @@ export default function Cart() {
       <ul className="space-y-6">
         {cart.map((item) => (
           <li
-            key={item.id}
+            key={item._id}
             className="flex flex-col md:flex-row items-center justify-between bg-white rounded-2xl shadow-lg p-4 hover:shadow-2xl transition-shadow duration-300 animate-fade-in-up"
           >
             <div className="flex items-center gap-4 w-full md:w-2/3">
@@ -77,14 +76,14 @@ export default function Cart() {
                 <p className="text-pink-600 font-bold text-lg">${item.price}</p>
                 <div className="flex items-center gap-2 mt-2">
                   <button
-                    onClick={() => handleQuantityChange(item.id, "decrease")}
+                    onClick={() => handleQuantityChange(item._id, "decrease")}
                     className="px-3 py-1 bg-gray-200 rounded-full hover:bg-gray-300 transition"
                   >
                     -
                   </button>
                   <span className="font-medium">{item.quantity}</span>
                   <button
-                    onClick={() => handleQuantityChange(item.id, "increase")}
+                    onClick={() => handleQuantityChange(item._id, "increase")}
                     className="px-3 py-1 bg-gray-200 rounded-full hover:bg-gray-300 transition"
                   >
                     +
@@ -98,7 +97,7 @@ export default function Cart() {
                 ${(item.price * item.quantity).toFixed(2)}
               </p>
               <button
-                onClick={() => handleRemoveItem(item.id)}
+                onClick={() => handleRemoveItem(item._id)}
                 className="px-4 py-1 text-white bg-red-500 rounded-full hover:bg-red-600 shadow-md transition transform hover:scale-105"
               >
                 Remove

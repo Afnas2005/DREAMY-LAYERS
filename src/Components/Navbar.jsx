@@ -429,7 +429,7 @@ export default function Navbar({ isAuthenticated, setIsAuthenticated }) {
       {/* Spacer */}
       <div className="h-20 md:h-24"></div>
 
-      <style jsx>{`
+      <style >{`
         @keyframes fade-in {
           from {
             opacity: 0;

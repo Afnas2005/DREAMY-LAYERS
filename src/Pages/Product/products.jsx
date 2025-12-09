@@ -16,7 +16,7 @@ const Products = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3001/products")
+      .get("http://localhost:5001/api/products")
       .then((res) => {
         setProducts(res.data || []);
         setLoading(false);
@@ -133,12 +133,10 @@ const Products = () => {
               <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
               <p className="text-lg font-bold text-pink-600 mb-2">₹{product.price}</p>
               <div className="flex gap-2">
-                <button
-                  onClick={() => addToCart(product)}
-                  className="w-full bg-pink-500 text-white py-2 rounded-lg hover:bg-pink-600 shadow-md transition transform hover:scale-105"
-                >
-                  Add to Cart
-                </button>
+              <button onClick={() => addToCart(product)} className="w-full bg-pink-500 text-white py-2 rounded-lg hover:bg-pink-600 shadow-md transition transform hover:scale-105"
+              >
+                 Add to Cart
+                  </button>
                 <button
                   onClick={() => addToWishlist(product)}
                   className="w-full bg-yellow-500 text-white py-2 rounded-lg hover:bg-yellow-600 shadow-md transition transform hover:scale-105"

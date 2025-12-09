@@ -25,7 +25,7 @@ export default function UsersList() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:3001/users");
+      const res = await axios.get("http://localhost:5001/api/users");
       setUsers(res.data);
     } catch (err) {
       console.error(err);
@@ -38,39 +38,29 @@ export default function UsersList() {
     fetchUsers();
   }, []);
 
-  const toggleBlock = async (id, blocked) => {
+  const toggleBlock = async (_id, isBlocked) => {
     try {
-      await axios.patch(`http://localhost:3001/users/${id}`, {
-        blocked: !blocked,
-      });
+      if (isBlocked) {
+        await axios.put(`http://localhost:5001/api/users/unblock/${_id}`);
+      } else {
+        await axios.put(`http://localhost:5001/api/users/block/${_id}`);
+      }
       fetchUsers();
     } catch (err) {
       console.error("Error blocking/unblocking user:", err);
     }
   };
 
-  const handleSoftDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to deactivate this user?")) return;
-    
-    try {
-      await axios.patch(`http://localhost:3001/users/${id}`, {
-        active: false,
-      });
-      fetchUsers();
-    } catch (error) {
-      console.error("Error soft deleting user:", error);
-    }
-  };
-
   const filteredUsers = users.filter(user => {
-    const matchesSearch = user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         user.email?.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesStatus = filterStatus === "all" ||
-                         (filterStatus === "active" && user.active && !user.blocked) ||
-                         (filterStatus === "blocked" && user.blocked) ||
-                         (filterStatus === "inactive" && !user.active);
-    
+    const matchesSearch =
+      user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesStatus =
+      filterStatus === "all" ||
+      (filterStatus === "active" && !user.isBlocked) ||
+      (filterStatus === "blocked" && user.isBlocked);
+
     return matchesSearch && matchesStatus;
   });
 
@@ -92,7 +82,7 @@ export default function UsersList() {
           <div>
             <h2 className="text-3xl font-bold text-gray-800">Manage Users</h2>
             <p className="text-gray-600 mt-2">
-              {users.length} user{users.length !== 1 ? 's' : ''} in the system
+              {users.length} user{users.length !== 1 ? "s" : ""}
             </p>
           </div>
         </div>
@@ -132,7 +122,6 @@ export default function UsersList() {
               <option value="all">All Users</option>
               <option value="active">Active</option>
               <option value="blocked">Blocked</option>
-              <option value="inactive">Inactive</option>
             </select>
           </div>
         </div>
@@ -162,28 +151,24 @@ export default function UsersList() {
         <div className="grid grid-cols-1 gap-4">
           {filteredUsers.map((user) => (
             <div
-              key={user.id}
+              key={user._id}
               className={`bg-white rounded-2xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl ${
-                user.blocked 
+                user.isBlocked 
                   ? "border-l-4 border-red-500" 
-                  : user.active === false 
-                  ? "border-l-4 border-gray-400"
                   : "border-l-4 border-green-500"
               }`}
             >
               <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div className="flex items-center mb-4 md:mb-0">
-                  <div className={`p-3 rounded-xl mr-4 ${
-                    user.blocked 
-                      ? "bg-red-100 text-red-600" 
-                      : user.active === false 
-                      ? "bg-gray-100 text-gray-600"
-                      : "bg-green-100 text-green-600"
-                  }`}>
-                    {user.blocked ? (
+                  <div
+                    className={`p-3 rounded-xl mr-4 ${
+                      user.isBlocked
+                        ? "bg-red-100 text-red-600"
+                        : "bg-green-100 text-green-600"
+                    }`}
+                  >
+                    {user.isBlocked ? (
                       <Ban className="h-6 w-6" />
-                    ) : user.active === false ? (
-                      <UserX className="h-6 w-6" />
                     ) : (
                       <UserCheck className="h-6 w-6" />
                     )}
@@ -191,12 +176,7 @@ export default function UsersList() {
                   <div>
                     <h3 className="font-semibold text-lg text-gray-800 flex items-center">
                       {user.name}
-                      {!user.active && (
-                        <span className="ml-2 bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-xs font-medium">
-                          Inactive
-                        </span>
-                      )}
-                      {user.blocked && (
+                      {user.isBlocked && (
                         <span className="ml-2 bg-red-200 text-red-700 px-2 py-1 rounded-full text-xs font-medium">
                           Blocked
                         </span>
@@ -206,31 +186,27 @@ export default function UsersList() {
                       <Mail className="h-4 w-4 mr-1" />
                       {user.email}
                     </p>
-                    {user.phone && (
-                      <p className="text-gray-500 text-sm mt-1">
-                        Phone: {user.phone}
-                      </p>
-                    )}
                   </div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-2">
                   <Link
-                    to={`/admin/users/${user.id}`}
+                    to={`/admin/users/${user._id}`}
                     className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors duration-200 group/view"
                   >
                     <Eye className="h-4 w-4 group-hover/view:scale-110 transition-transform duration-200" />
                     View Details
                   </Link>
+
                   <button
-                    onClick={() => toggleBlock(user.id, user.blocked)}
+                    onClick={() => toggleBlock(user._id, user.isBlocked)}
                     className={`flex items-center justify-center gap-2 px-4 py-2 rounded-xl transition-colors duration-200 group/block ${
-                      user.blocked 
-                        ? "bg-green-500 hover:bg-green-600 text-white" 
+                      user.isBlocked
+                        ? "bg-green-500 hover:bg-green-600 text-white"
                         : "bg-yellow-500 hover:bg-yellow-600 text-white"
                     }`}
                   >
-                    {user.blocked ? (
+                    {user.isBlocked ? (
                       <>
                         <Unlock className="h-4 w-4 group-hover/block:scale-110 transition-transform duration-200" />
                         Unblock
@@ -242,10 +218,10 @@ export default function UsersList() {
                       </>
                     )}
                   </button>
+
                   <button
-                    onClick={() => handleSoftDelete(user.id)}
-                    disabled={user.active === false}
-                    className="flex items-center justify-center gap-2 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-200 group/delete"
+                    disabled={true}
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-300 text-white rounded-xl cursor-not-allowed transition-colors duration-200 group/delete"
                   >
                     <Trash2 className="h-4 w-4 group-hover/delete:scale-110 transition-transform duration-200" />
                     Deactivate

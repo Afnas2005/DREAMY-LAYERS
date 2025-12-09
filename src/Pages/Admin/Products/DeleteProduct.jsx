@@ -8,14 +8,14 @@ export default function DeleteProduct() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`http://localhost:3001/products/${id}`)
+    axios.get(`http://localhost:5001/api/products/${id}`)
       .then((res) => setProduct(res.data))
       .catch((err) => console.error(err));
   }, [id]);
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:3001/products/${id}`);
+      await axios.delete(`http://localhost:5001/api/products/${id}`);
       navigate("/admin/products");
     } catch (err) {
       console.error("Error deleting product:", err);

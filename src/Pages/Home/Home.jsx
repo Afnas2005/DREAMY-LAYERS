@@ -13,10 +13,12 @@ const Home = ({ isAuthenticated, setIsAuthenticated }) => {
 
   const { cart, addToCart, clearCart } = useContext(CartContext);
 
-  useEffect(() => {
-    axios.get("http://localhost:3001/cakes").then((res) => setCakes(res.data));
-    axios.get("http://localhost:3001/products").then((res) => setProducts(res.data));
-    
+ useEffect(() => {
+  axios.get("http://localhost:5001/api/products")
+    .then(res => setProducts(res.data))
+    .catch(err => console.error(err));
+
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
@@ -327,7 +329,7 @@ const Home = ({ isAuthenticated, setIsAuthenticated }) => {
 
       <Footer />
 
-      <style jsx>{`
+      <style >{`
         @keyframes float {
           0%, 100% { transform: translateY(0) rotate(0deg); }
           50% { transform: translateY(-20px) rotate(5deg); }

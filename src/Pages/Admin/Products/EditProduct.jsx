@@ -1,60 +1,77 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Save, Image, Package, DollarSign, Tag, FileText, Edit } from "lucide-react";
+import {
+  ArrowLeft,
+  Save,
+  Image,
+  Package,
+  DollarSign,
+  Tag,
+  FileText,
+  Edit
+} from "lucide-react";
 
 export default function EditProduct() {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
   const [product, setProduct] = useState({
     name: "",
     price: "",
     description: "",
     image: "",
-    category: "",
+    category: ""
   });
-  const [error, setError] = useState("");
 
   useEffect(() => {
-    const load = async () => {
+    async function loadProduct() {
+      setError("");
+      setLoading(true);
+
       try {
-        const res = await axios.get(`http://localhost:3001/products/${id}`);
-        const p = res.data || {};
+        const res = await axios.get(`http://localhost:5001/api/products/${id}`);
+        const data = res.data;
+
         setProduct({
-          name: p.name || "",
-          price: p.price || "",
-          description: p.description || "",
-          image: p.image || "",
-          category: p.category || "",
+          name: data.name || "",
+          price: data.price || "",
+          description: data.description || "",
+          image: data.image || "",
+          category: data.category || "",
         });
-      } catch (e) {
-        console.error("Error fetching product:", e);
-        setError("Failed to load product. Check console for details.");
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load product.");
       } finally {
         setLoading(false);
       }
-    };
-    load();
+    }
+
+    if (id) loadProduct();
   }, [id]);
 
-  const handleChange = (e) =>
-    setProduct((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (e) => {
+    setProduct({ ...product, [e.target.name]: e.target.value });
+  };
 
   const handleSave = async (e) => {
     e.preventDefault();
     setSaving(true);
     setError("");
-    
+
     try {
-      await axios.put(`http://localhost:3001/products/${id}`, {
-        ...product,
-        id: Number(id),
+      await axios.put(`http://localhost:5001/api/products/${id}`, {
+        ...product
       });
+
       navigate("/admin/products");
-    } catch (e) {
-      console.error("Error updating product:", e);
+    } catch (err) {
+      console.error("Error updating product:", err);
       setError("Update failed. Check console for details.");
     } finally {
       setSaving(false);
@@ -65,6 +82,24 @@ export default function EditProduct() {
     return (
       <div className="flex justify-center items-center py-20">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+      </div>
+    );
+  }
+
+  if (!loading && error) {
+    return (
+      <div className="max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow-lg mt-20">
+        <p className="text-red-600 mb-4 text-center font-semibold">
+          {error}
+        </p>
+        <div className="flex justify-center">
+          <button
+            onClick={() => navigate("/admin/products")}
+            className="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-300"
+          >
+            Back
+          </button>
+        </div>
       </div>
     );
   }
@@ -85,19 +120,9 @@ export default function EditProduct() {
         </h2>
       </div>
 
-      {error && (
-        <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-xl border border-red-200 flex items-center animate-fade-in">
-          <div className="bg-red-100 p-2 rounded-full mr-3">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
-          </div>
-          <span>{error}</span>
-        </div>
-      )}
-
       <form onSubmit={handleSave} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
               <Package className="h-4 w-4 mr-2 text-pink-500" />
@@ -162,7 +187,8 @@ export default function EditProduct() {
                   alt="preview"
                   className="h-48 w-full object-cover rounded-xl border border-gray-200"
                   onError={(e) => {
-                    e.target.src = "https://via.placeholder.com/400x300?text=Invalid+Image+URL";
+                    e.target.src =
+                      "https://via.placeholder.com/300x200.png?text=No+Image";
                   }}
                 />
               </div>
@@ -187,11 +213,12 @@ export default function EditProduct() {
         <div className="flex gap-4">
           <button
             type="button"
-            onClick={() => navigate("/admin/products")} 
+            onClick={() => navigate("/admin/products")}
             className="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-300"
           >
             Cancel
           </button>
+
           <button
             type="submit"
             disabled={saving}

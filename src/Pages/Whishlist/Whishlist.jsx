@@ -4,16 +4,15 @@ import { Link } from "react-router-dom";
 
 export default function Wishlist() {
   const { wishlist, removeFromWishlist, addToCart } = useContext(CartContext);
-  
- 
+
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
 
   const handleMoveToCart = (item) => {
     if (!isAuthenticated) return;
-    
+
     const cartItem = { ...item, quantity: 1 };
     addToCart(cartItem);
-    removeFromWishlist(item.id);
+    removeFromWishlist(item._id); 
   };
 
   const handleRemoveFromWishlist = (id) => {
@@ -45,7 +44,7 @@ export default function Wishlist() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {wishlist.map((item) => (
             <div
-              key={item.id}
+              key={item._id}
               className="flex flex-col sm:flex-row justify-between items-center bg-white p-4 rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300 animate-fade-in-up"
             >
               <div className="flex items-center gap-4 w-full sm:w-2/3">
@@ -68,7 +67,7 @@ export default function Wishlist() {
                   Move to Cart
                 </button>
                 <button
-                  onClick={() => handleRemoveFromWishlist(item.id)}
+                  onClick={() => handleRemoveFromWishlist(item._id)}
                   className="text-red-500 hover:text-red-700 font-semibold"
                 >
                   Remove

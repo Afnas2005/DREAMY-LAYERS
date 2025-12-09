@@ -19,47 +19,41 @@ export default function Login({ setIsAuthenticated }) {
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setForgotMsg("");
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+  setSubmitted(false);
 
-    try {
-      // 🔑 Check login against db.json (users + admins)
-      const res = await axios.get(
-        `http://localhost:3001/users?email=${form.email}&password=${form.password}`
-      );
+  try {
+    const res = await axios.post("http://localhost:5001/api/users/login", {
+      email: form.email,
+      password: form.password,
+    });
 
-      if (res.data.length > 0) {
-        const user = res.data[0];
+    const user = res.data.user;
 
-        // ✅ If role = admin → admin dashboard
-        if (user.role === "admin") {
-          setSubmitted(true);
-          setIsAuthenticated(true);
-          localStorage.setItem("isAuthenticated", "true");
-          localStorage.setItem("user", JSON.stringify(user));
-          setCurrentUser(user);
+    // save login
+    localStorage.setItem("isAuthenticated", "true");
+    localStorage.setItem("user", JSON.stringify(user));
+    setCurrentUser(user);
+    setIsAuthenticated(true);
 
-          setTimeout(() => navigate("/admin"), 1000);
-          return;
-        }
+    setSubmitted(true);
 
-        // ✅ Normal user
-        setSubmitted(true);
-        setIsAuthenticated(true);
-        localStorage.setItem("isAuthenticated", "true");
-        localStorage.setItem("user", JSON.stringify(user));
-        setCurrentUser(user);
-
-        setTimeout(() => navigate("/"), 1000);
-      } else {
-        setError("Invalid email or password!");
-      }
-    } catch (err) {
-      setError("Something went wrong!");
+    // redirect correctly
+    if (user.role === "admin") {
+      navigate("/admin", { replace: true });
+    } else {
+      navigate("/", { replace: true });
     }
-  };
+
+  } catch (err) {
+    setSubmitted(false);
+    setError(err.response?.data?.message || "Invalid email or password");
+  }
+};
+
+
 
   const handleForgotSubmit = async (e) => {
     e.preventDefault();
@@ -67,7 +61,7 @@ export default function Login({ setIsAuthenticated }) {
 
     try {
       const res = await axios.get(
-        `http://localhost:3001/users?email=${forgotEmail}`
+        `http://localhost:5001/api/users?email=${forgotEmail}`
       );
       if (res.data.length > 0) {
         setForgotMsg(
@@ -243,7 +237,7 @@ export default function Login({ setIsAuthenticated }) {
         )}
       </div>
 
-      <style jsx>{`
+      <style >{`
         @keyframes float {
           0%, 100% { transform: translateY(0) rotate(0deg); }
           50% { transform: translateY(-20px) rotate(5deg); }

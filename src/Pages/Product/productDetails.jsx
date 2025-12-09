@@ -13,23 +13,15 @@ export default function ProductDetails() {
 
   const { addToCart, addToWishlist } = useContext(CartContext);
 
-  useEffect(() => {
-    setLoading(true);
-    axios.get(`http://localhost:3001/products?id=${id}`)
-  .then(res => {
-    if(res.data.length > 0){
-      setProduct(res.data[0]);
-    } else {
-      setError("Product not found.");
-    }
-    setLoading(false);
-  })
-  .catch(err => {
-    setError("Failed to load product. Please try again.");
-    setLoading(false);
-  });
+useEffect(() => {
+  axios.get(`http://localhost:5001/api/products/${id}`)
+    .then(res => {
+      setProduct(res.data);
+    })
+    .catch(() => setError("Product not found"))
+    .finally(() => setLoading(false));
+}, [id]);
 
-  }, [id]);
 
   if (loading) {
     return (

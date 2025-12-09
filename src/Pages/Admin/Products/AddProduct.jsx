@@ -31,7 +31,7 @@ export default function AddProduct() {
         category: product.category || "",
       };
 
-      await axios.post("http://localhost:3001/products", payload);
+      await axios.post("http://localhost:5001/api/products", payload);
 
       navigate("/admin/products");
     } catch (err) {

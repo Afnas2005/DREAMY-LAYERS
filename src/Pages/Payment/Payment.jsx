@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "../../Context/CartContext";
 import toast from "react-hot-toast";
+import axios from "axios";
+import { useCart } from "../../Context/CartContext";
 
 export default function Payment() {
   const [name, setName] = useState("");
@@ -9,23 +10,40 @@ export default function Payment() {
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const navigate = useNavigate();
-  const { cart, addOrder } = useCart(); 
+  const { cart, clearCart } = useCart();
 
-  const handlePayment = (e) => {
-  e.preventDefault();
+  const handlePayment = async (e) => {
+    e.preventDefault();
 
-  const orderDetails = { name, phone, address, paymentMethod };
+    const user = JSON.parse(localStorage.getItem("user"));
 
-  addOrder(cart);
+    try {
+      await axios.post("http://localhost:5001/api/orders", {
+        userId: user._id,
+        name,
+        phone,
+        shippingAddress: address,
+        items: cart,
+        total: cart.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0
+        ),
+        paymentMethod,
+        status: "Pending",
+        date: new Date(),
+      });
 
-  if (paymentMethod === "cod") {
-    toast.success("Order Placed with Cash on Delivery! 🎉");
-  } else {
-    toast.success("Payment Successful via Net Banking! 🎉");
-  }
+      // Clear cart after successful order
+      clearCart();
 
-  navigate("/order");
-};
+      toast.success("Order placed successfully 🎉");
+      navigate("/order");
+
+    } catch (error) {
+      console.error("Order submit failed", error);
+      toast.error("Order failed!");
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
@@ -101,7 +119,10 @@ export default function Payment() {
             </div>
           ))}
           <div className="border-t border-gray-200 mt-2 pt-2 font-semibold">
-            Total: ${cart.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)}
+            Total: ${cart.reduce(
+              (sum, item) => sum + item.price * item.quantity,
+              0
+            ).toFixed(2)}
           </div>
         </div>
 

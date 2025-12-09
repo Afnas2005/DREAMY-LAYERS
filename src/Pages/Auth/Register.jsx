@@ -19,45 +19,48 @@ export default function RegisterPage({ setIsAuthenticated }) {
     if (error) setError("");
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+  setIsLoading(true);
 
-    const { name, email, password, confirmPassword } = form;
+  const { name, email, password, confirmPassword } = form;
 
-    if (!name || !email || !password || !confirmPassword) {
-      setError("All fields are required");
-      setIsLoading(false);
-      return;
-    }
+  if (!name || !email || !password || !confirmPassword) {
+    setError("All fields are required");
+    setIsLoading(false);
+    return;
+  }
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      setIsLoading(false);
-      return;
-    }
+  if (password !== confirmPassword) {
+    setError("Passwords do not match");
+    setIsLoading(false);
+    return;
+  }
 
-    try {
-      const res = await axios.get(`http://localhost:3001/users?email=${email}`);
-      if (res.data.length > 0) {
-        setError("User already exists!");
-        setIsLoading(false);
-        return;
-      }
+  try {
+    await axios.post("http://localhost:5001/api/users/register", {
+      name,
+      email,
+      password
+    });
 
-      await axios.post("http://localhost:3001/users", { name, email, password });
+    setSuccess(true);
+    setTimeout(() => {
+      navigate("/login");
+    }, 1500);
 
-      setSuccess(true);
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
-    } catch (err) {
+  } catch (err) {
+    if (err.response && err.response.data.message === "User already exists") {
+      setError("User already exists!");
+    } else {
       setError("Something went wrong!");
-    } finally {
-      setIsLoading(false);
     }
-  };
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-pink-50 to-yellow-50 p-4 relative overflow-hidden">

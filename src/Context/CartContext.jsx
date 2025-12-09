@@ -1,18 +1,15 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext();
-
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [wishlist, setWishlist] = useState([]);
-  const [orders, setOrders] = useState([]); 
+  const [orders, setOrders] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState(null);
-  
-  
+
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     const isAuth = localStorage.getItem("isAuthenticated") === "true";
@@ -23,7 +20,6 @@ export const CartProvider = ({ children }) => {
     }
   }, []);
 
- 
   const loadUserData = (user) => {
     const storedCart = JSON.parse(localStorage.getItem(`cart_${user.email}`)) || [];
     const storedWishlist = JSON.parse(localStorage.getItem(`wishlist_${user.email}`)) || [];
@@ -47,40 +43,73 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = (product) => {
     setCart((prev) => {
-      const existing = prev.find((p) => p.id === product.id);
-      if (existing) return prev.map((p) => (p.id === product.id ? { ...p, quantity: p.quantity + 1 } : p));
+      const existing = prev.find((p) => p._id === product._id);
+      if (existing) {
+        return prev.map((p) =>
+          p._id === product._id ? { ...p, quantity: p.quantity + 1 } : p
+        );
+      }
       return [...prev, { ...product, quantity: 1 }];
     });
   };
 
-  const removeFromCart = (id) => setCart((prev) => prev.filter((p) => p.id !== id));
-  const increaseQuantity = (id) => setCart((prev) => prev.map((p) => (p.id === id ? { ...p, quantity: p.quantity + 1 } : p)));
-  const decreaseQuantity = (id) => setCart((prev) => prev.map((p) => (p.id === id && p.quantity > 1 ? { ...p, quantity: p.quantity - 1 } : p)));
+  const removeFromCart = (id) =>
+    setCart((prev) => prev.filter((p) => p._id !== id));
 
-  const addToWishlist = (product) => setWishlist((prev) => (prev.find((p) => p.id === product.id) ? prev : [...prev, product]));
-  const removeFromWishlist = (id) => setWishlist((prev) => prev.filter((p) => p.id !== id));
+  const increaseQuantity = (id) =>
+    setCart((prev) =>
+      prev.map((p) =>
+        p._id === id ? { ...p, quantity: p.quantity + 1 } : p
+      )
+    );
+
+  const decreaseQuantity = (id) =>
+    setCart((prev) =>
+      prev.map((p) =>
+        p._id === id && p.quantity > 1
+          ? { ...p, quantity: p.quantity - 1 }
+          : p
+      )
+    );
+
+  const addToWishlist = (product) =>
+    setWishlist((prev) =>
+      prev.find((p) => p._id === product._id) ? prev : [...prev, product]
+    );
+
+  const removeFromWishlist = (id) =>
+    setWishlist((prev) => prev.filter((p) => p._id !== id));
 
   const addOrder = (orderItems) => {
     const newOrder = {
       id: Date.now(),
       date: new Date().toISOString(),
       items: orderItems,
-      total: orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+      total: orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+      status: "Pending"
     };
-    
-    setOrders(prev => [...prev, newOrder]);
-    setCart([]); 
+
+    setOrders((prev) => [...prev, newOrder]);
+    clearCart();
+  };
+
+  // ⭐ FIX — proper clear cart
+  const clearCart = () => {
+    setCart([]);
+    if (user) {
+      localStorage.removeItem(`cart_${user.email}`);
+    }
   };
 
   const resetCartAndWishlist = () => {
-    setCart([]);
+    clearCart();
     setWishlist([]);
   };
 
   const setCurrentUser = (newUser) => {
     setUser(newUser);
     if (newUser) {
-      loadUserData(newUser); 
+      loadUserData(newUser);
     } else {
       resetCartAndWishlist();
       setOrders([]);
@@ -101,7 +130,8 @@ export const CartProvider = ({ children }) => {
         decreaseQuantity,
         addToWishlist,
         removeFromWishlist,
-        addOrder, 
+        addOrder,
+        clearCart,   // << ⭐ NOW AVAILABLE
         resetCartAndWishlist,
         setCurrentUser,
         user,

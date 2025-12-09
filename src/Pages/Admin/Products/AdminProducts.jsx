@@ -12,7 +12,7 @@ export default function AdminProducts() {
     setLoading(true);
     setError("");
     try {
-      const res = await axios.get("http://localhost:3001/products");
+      const res = await axios.get("http://localhost:5001/api/products");
       setProducts(Array.isArray(res.data) ? res.data : []);
     } catch (e) {
       console.error("Failed to load products", e);
@@ -30,7 +30,7 @@ export default function AdminProducts() {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
 
     try {
-      await axios.delete(`http://localhost:3001/products/${id}`);
+      await axios.delete(`http://localhost:5001/api/products/${id}`);
       await fetchProducts();
     } catch (e) {
       console.error("Delete failed", e);
@@ -108,16 +108,18 @@ export default function AdminProducts() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
           {products.map((p) => (
             <div
-              key={p.id}
+              key={p._id}
               className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group"
             >
               <div className="h-48 w-full overflow-hidden relative">
                 <img
                   src={
                     p.image ||
-                    "https://via.placeholder.com/400x300?text=No+Image"
+                    "https://via.placeholder.com/300x200.png?text=No+Image"
+
                   }
                   alt={p.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -151,15 +153,16 @@ export default function AdminProducts() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Link
-                    to={`/admin/products/edit/${p.id}`}
+                 <Link to={`/admin/products/edit/${p._id}`} 
+
+
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 group/edit"
                   >
                     <Edit3 className="h-4 w-4 group-hover/edit:scale-110 transition-transform duration-200" />
                     Edit
                   </Link>
                   <button
-                    onClick={() => handleDelete(p.id)}
+                    onClick={() => handleDelete(p._id)}
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-200 group/delete"
                   >
                     <Trash2 className="h-4 w-4 group-hover/delete:scale-110 transition-transform duration-200" />

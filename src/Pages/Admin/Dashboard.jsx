@@ -6,6 +6,8 @@ import EditProduct from "./Products/EditProduct";
 import DeleteProduct from "./Products/DeleteProduct";
 import UsersList from "./Users/UsersList";
 import UserDetails from "./Users/UserDetails";
+import OrderDetails from "./OrderStatus/OrderDetails";
+import AdminOrders from "./OrderStatus/AdminOrders";
 import { 
   Layout, 
   Package, 
@@ -179,11 +181,11 @@ export default function Dashboard() {
         setLoading(true);
         
         // Fetch products
-        const productsResponse = await axios.get("http://localhost:3001/products");
+        const productsResponse = await axios.get("http://localhost:5001/api/products");
         const totalProducts = productsResponse.data.length;
         
         // Fetch users
-        const usersResponse = await axios.get("http://localhost:3001/users");
+        const usersResponse = await axios.get("http://localhost:5001/api/users");
         const activeUsers = usersResponse.data.filter(user => user.active !== false);
         const totalUsers = activeUsers.length;
         
@@ -219,6 +221,8 @@ export default function Dashboard() {
     { path: "/admin", label: "Dashboard", icon: <Layout className="h-5 w-5" /> },
     { path: "/admin/products", label: "Manage Products", icon: <Package className="h-5 w-5" /> },
     { path: "/admin/users", label: "Manage Users", icon: <Users className="h-5 w-5" /> },
+    { path: "/admin/orders", label: "Manage Orders", icon: <ShoppingCart className="h-5 w-5" /> },
+
   ];
 
   return (
@@ -490,16 +494,19 @@ export default function Dashboard() {
               } />
               <Route path="products" element={<AdminProducts />} />
               <Route path="products/add" element={<AddProduct />} />
-              <Route path="products/edit/:id" element={<EditProduct />} />
-              <Route path="products/delete/:id" element={<DeleteProduct />} />
+              <Route path="products/edit/:_id" element={<EditProduct />} />
+              <Route path="products/delete/:_id" element={<DeleteProduct />} />
               <Route path="users" element={<UsersList />} />
-              <Route path="users/:id" element={<UserDetails />} />
+              <Route path="users/:_id" element={<UserDetails />} />
+              <Route path="orders" element={<AdminOrders />} />
+              <Route path="orders/:_id" element={<OrderDetails />} />
+
             </Routes>
           </main>
         </div>
       </div>
 
-      <style jsx>{`
+      <style >{`
         @keyframes fade-in {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
