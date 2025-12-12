@@ -32,15 +32,14 @@ const handleSubmit = async (e) => {
 
     const user = res.data.user;
 
-    // save login
     localStorage.setItem("isAuthenticated", "true");
+    localStorage.setItem("token", res.data.token);
     localStorage.setItem("user", JSON.stringify(user));
     setCurrentUser(user);
     setIsAuthenticated(true);
 
     setSubmitted(true);
 
-    // redirect correctly
     if (user.role === "admin") {
       navigate("/admin", { replace: true });
     } else {

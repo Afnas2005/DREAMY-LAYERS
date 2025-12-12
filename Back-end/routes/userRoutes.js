@@ -1,7 +1,11 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
-const User = require("../models/User");
+const User = require("../models/user");
 const router = express.Router();
+const jwt = require("jsonwebtoken");
+const generateToken = require("../utils/generateToken");
+
+const route = express.Router();
 
 const {
   registerValidation,
@@ -9,7 +13,6 @@ const {
 } = require("../validations/userValidation");
 
 
-// -------------------- GET ALL USERS --------------------
 router.get("/", async (req, res) => {
   try {
     const users = await User.find({}, "-password");
@@ -20,7 +23,6 @@ router.get("/", async (req, res) => {
 });
 
 
-// -------------------- REGISTER --------------------
 router.post("/register", async (req, res) => {
   try {
     const { error } = registerValidation.validate(req.body);
@@ -60,7 +62,6 @@ router.post("/register", async (req, res) => {
 });
 
 
-// -------------------- LOGIN --------------------
 router.post("/login", async (req, res) => {
   try {
     const { error } = loginValidation.validate(req.body);
@@ -73,7 +74,6 @@ router.post("/login", async (req, res) => {
     if (!user)
       return res.status(400).json({ message: "Invalid email or password" });
 
-    // ❗ Block check
     if (user.isBlocked)
       return res.status(403).json({ message: "Your account is blocked" });
 
@@ -81,8 +81,13 @@ router.post("/login", async (req, res) => {
     if (!isMatch)
       return res.status(400).json({ message: "Invalid email or password" });
 
+const token = generateToken(user._id, user.role);
+
+
+
     res.json({
       message: "Login success",
+      token,
       user: {
         _id: user._id,
         name: user.name,
@@ -97,7 +102,6 @@ router.post("/login", async (req, res) => {
 });
 
 
-// -------------------- BLOCK USER --------------------
 router.put("/block/:id", async (req, res) => {
   try {
     const updated = await User.findByIdAndUpdate(
@@ -112,7 +116,6 @@ router.put("/block/:id", async (req, res) => {
 });
 
 
-// -------------------- UNBLOCK USER --------------------
 router.put("/unblock/:id", async (req, res) => {
   try {
     const updated = await User.findByIdAndUpdate(

@@ -28,7 +28,6 @@ export default function Navbar({ isAuthenticated, setIsAuthenticated }) {
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const location = useLocation();
 
-  // Get user data from localStorage
   const userData = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
@@ -46,7 +45,6 @@ export default function Navbar({ isAuthenticated, setIsAuthenticated }) {
     setIsUserDropdownOpen(false);
   }, [location]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (isUserDropdownOpen && !event.target.closest(".user-dropdown")) {
@@ -93,7 +91,6 @@ export default function Navbar({ isAuthenticated, setIsAuthenticated }) {
               </h1>
             </Link>
 
-            {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-1">
               <Link
                 to="/"
@@ -178,9 +175,7 @@ export default function Navbar({ isAuthenticated, setIsAuthenticated }) {
               </Link>
             </div>
 
-            {/* Right side */}
             <div className="hidden md:flex items-center space-x-4">
-              {/* Search */}
               <div className="relative">
                 {isSearchOpen && (
                   <div className="absolute right-0 top-12 bg-white rounded-xl shadow-2xl p-2 w-64 animate-fade-in">
@@ -195,7 +190,6 @@ export default function Navbar({ isAuthenticated, setIsAuthenticated }) {
                 )}
               </div>
 
-              {/* User */}
               {isAuthenticated ? (
                 <div className="relative user-dropdown">
                   <button
@@ -222,7 +216,6 @@ export default function Navbar({ isAuthenticated, setIsAuthenticated }) {
                         </p>
                       </div>
 
-                      {/* Show Admin Dashboard only for admin */}
                       {userData.role === "admin" && (
                         <Link
                           to="/admin"
@@ -256,7 +249,6 @@ export default function Navbar({ isAuthenticated, setIsAuthenticated }) {
               )}
             </div>
 
-            {/* Mobile Buttons */}
             <div className="md:hidden flex items-center space-x-3">
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
@@ -286,7 +278,6 @@ export default function Navbar({ isAuthenticated, setIsAuthenticated }) {
             </div>
           </div>
 
-          {/* Mobile Search */}
           {isSearchOpen && (
             <div className="md:hidden mt-4 animate-fade-in">
               <input
@@ -299,7 +290,6 @@ export default function Navbar({ isAuthenticated, setIsAuthenticated }) {
             </div>
           )}
 
-          {/* Mobile Menu */}
           {isMobileMenuOpen && (
             <div className="md:hidden mt-6 pb-4 animate-fade-in-up">
               <div className="grid grid-cols-1 gap-2">
@@ -390,7 +380,6 @@ export default function Navbar({ isAuthenticated, setIsAuthenticated }) {
                         </p>
                       </div>
 
-                      {/* Mobile Admin Dashboard */}
                       {userData.role === "admin" && (
                         <Link
                           to="/admin"
@@ -426,7 +415,6 @@ export default function Navbar({ isAuthenticated, setIsAuthenticated }) {
         </div>
       </nav>
 
-      {/* Spacer */}
       <div className="h-20 md:h-24"></div>
 
       <style >{`

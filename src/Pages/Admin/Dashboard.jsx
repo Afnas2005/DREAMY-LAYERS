@@ -27,7 +27,6 @@ import {
 } from "lucide-react";
 import axios from "axios";
 
-// Graph Components
 const BarChart = ({ data, color, title }) => {
   const maxValue = Math.max(...data.map(item => item.value));
   
@@ -147,7 +146,6 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const location = useLocation();
   
-  // Mock data for charts
   const salesData = [
     { label: "Mon", value: 12 },
     { label: "Tue", value: 19 },
@@ -174,22 +172,18 @@ export default function Dashboard() {
     { label: "Other", value: 3, color: "#10B981" }
   ];
 
-  // Fetch statistics data
   useEffect(() => {
     const fetchStats = async () => {
       try {
         setLoading(true);
         
-        // Fetch products
         const productsResponse = await axios.get("http://localhost:5001/api/products");
         const totalProducts = productsResponse.data.length;
         
-        // Fetch users
         const usersResponse = await axios.get("http://localhost:5001/api/users");
         const activeUsers = usersResponse.data.filter(user => user.active !== false);
         const totalUsers = activeUsers.length;
         
-        // Set actual values from your request
         const ordersToday = 23;
         const revenue = 1418;
         
@@ -209,14 +203,12 @@ export default function Dashboard() {
     fetchStats();
   }, []);
 
-  // Handle logout
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("user");
     window.location.href = "/";
   };
 
-  // Navigation items - use absolute paths
   const navItems = [
     { path: "/admin", label: "Dashboard", icon: <Layout className="h-5 w-5" /> },
     { path: "/admin/products", label: "Manage Products", icon: <Package className="h-5 w-5" /> },
@@ -227,11 +219,9 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 flex flex-col">
-      {/* Navbar Spacer - This prevents content from being hidden behind navbar */}
       <div className="h-16 md:h-0"></div>
       
       <div className="flex flex-1 relative">
-        {/* Sidebar Overlay for mobile */}
         {isSidebarOpen && (
           <div 
             className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
@@ -239,14 +229,12 @@ export default function Dashboard() {
           />
         )}
         
-        {/* Sidebar */}
         <aside className={`
           fixed top-16 left-0 h-[calc(100vh-4rem)] bg-gradient-to-b from-pink-600 to-purple-700 text-white 
           p-6 z-40 transform transition-all duration-300 ease-in-out overflow-y-auto
           ${isSidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full w-0'}
           md:sticky md:top-0 md:translate-x-0 md:w-64 md:flex-shrink-0 md:h-screen
         `}>
-          {/* Logo and Toggle */}
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center space-x-3">
               <div className="bg-white/20 p-2 rounded-lg">
@@ -264,7 +252,6 @@ export default function Dashboard() {
             </button>
           </div>
 
-          {/* Navigation */}
           <nav className="flex flex-col gap-2 mb-8">
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;
@@ -293,7 +280,6 @@ export default function Dashboard() {
             })}
           </nav>
 
-          {/* Quick Actions */}
           <div className="mb-8">
             <h3 className="text-pink-200 text-sm font-semibold uppercase tracking-wider mb-3 pl-3">
               Quick Actions
@@ -310,7 +296,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Footer Links */}
           <div className="mt-auto pt-8 border-t border-pink-500/30">
             <div className="space-y-2">
               <Link
@@ -332,9 +317,7 @@ export default function Dashboard() {
           </div>
         </aside>
 
-        {/* Main Content */}
         <div className="flex-1 flex flex-col min-h-screen">
-          {/* Mobile Header */}
           <header className="md:hidden flex items-center justify-between p-4 bg-white shadow-lg sticky top-0 z-30">
             <button 
               onClick={() => setIsSidebarOpen(true)}
@@ -348,12 +331,10 @@ export default function Dashboard() {
             </div>
           </header>
 
-          {/* Main Content Area */}
           <main className="flex-1 p-4 md:p-6 overflow-auto">
             <Routes>
               <Route index element={
                 <div>
-                  {/* Dashboard Header */}
                   <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 animate-fade-in">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                       <div>
@@ -378,7 +359,6 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  {/* Stats Cards */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                     {[
                       { 
@@ -435,16 +415,13 @@ export default function Dashboard() {
                     ))}
                   </div>
 
-                  {/* Charts Section */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                    {/* Sales Chart */}
                     <BarChart 
                       data={salesData} 
                       color="#EC4899" 
                       title="Weekly Sales Performance" 
                     />
                     
-                    {/* User Growth Chart */}
                     <LineChart 
                       data={userGrowthData} 
                       color="#8B5CF6" 
@@ -452,9 +429,7 @@ export default function Dashboard() {
                     />
                   </div>
 
-                  {/* Additional Stats */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    {/* Product Categories */}
                     <DonutChart 
                       value={8}
                       max={19}
@@ -463,7 +438,6 @@ export default function Dashboard() {
                       icon={<Package className="h-4 w-4" />}
                     />
                     
-                    {/* Average Order Value */}
                     <div className="bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center">
                       <h3 className="text-sm font-semibold text-gray-600 mb-2">Avg. Order Value</h3>
                       <div className="text-2xl font-bold text-blue-600">$61.65</div>
@@ -473,7 +447,6 @@ export default function Dashboard() {
                       </div>
                     </div>
                     
-                    {/* Conversion Rate */}
                     <div className="bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center">
                       <h3 className="text-sm font-semibold text-gray-600 mb-2">Conversion Rate</h3>
                       <div className="text-2xl font-bold text-purple-600">4.2%</div>
@@ -483,7 +456,6 @@ export default function Dashboard() {
                       </div>
                     </div>
                     
-                    {/* Customer Satisfaction */}
                     <div className="bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center">
                       <h3 className="text-sm font-semibold text-gray-600 mb-2">Satisfaction</h3>
                       <div className="text-2xl font-bold text-green-600">94%</div>

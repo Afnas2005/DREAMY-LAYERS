@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 require("dotenv").config();
-const User = require("./models/User");
+const User = require("./models/user");
 
 mongoose.connect(process.env.MONGO_URI)
   .then(async () => {

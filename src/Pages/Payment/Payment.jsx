@@ -33,7 +33,6 @@ export default function Payment() {
         date: new Date(),
       });
 
-      // Clear cart after successful order
       clearCart();
 
       toast.success("Order placed successfully 🎉");

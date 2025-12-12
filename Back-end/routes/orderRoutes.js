@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const Order = require("../models/Order");
+const auth = require("../middleware/auth");
 
-// ⭐ Create an order
-router.post("/", async (req, res) => {
+
+router.post("/",auth, async (req, res) => {
   try {
     const order = await Order.create(req.body);
     res.status(201).json(order);
@@ -12,8 +13,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// ⭐ Get orders for a single user
-router.get("/user/:userId", async (req, res) => {
+router.get("/user/:userId",auth, async (req, res) => {
   try {
     const orders = await Order.find({ userId: req.params.userId });
     res.status(200).json(orders);
@@ -22,8 +22,7 @@ router.get("/user/:userId", async (req, res) => {
   }
 });
 
-// ⭐ Get all orders (admin)
-router.get("/", async (req, res) => {
+router.get("/",auth, async (req, res) => {
   try {
     const orders = await Order.find();
     res.json(orders);
@@ -32,8 +31,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ⭐ Update order status (admin)
-router.put("/:id/status", async (req, res) => {
+router.put("/:id/status",auth, async (req, res) => {
   try {
     await Order.findByIdAndUpdate(req.params.id, {
       status: req.body.status,

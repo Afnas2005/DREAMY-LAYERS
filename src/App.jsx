@@ -14,7 +14,6 @@ import { Toaster } from "react-hot-toast";
 import Navbar from "./Components/Navbar";
 import { CartProvider } from "./Context/CartContext";
 
-// Admin pages
 import AdminDashboard from "./Pages/Admin/Dashboard";
 import AdminProducts from "./Pages/Admin/Products/AdminProducts";
 import AddProduct from "./Pages/Admin/Products/AddProduct";
@@ -62,7 +61,6 @@ export default function App() {
                 />
                 <Route path="/products" element={<Products />} />
 
-                {/* FIX HERE */}
                 <Route path="/products/:id" element={<ProductDetails />} />
 
                 <Route path="/cart" element={<Cart />} />
@@ -104,7 +102,6 @@ export default function App() {
               <Route path="*" element={<Navigate to="/admin" />} />
             )}
 
-            {/* Admin Routes */}
             <Route
               path="/admin/*"
               element={isAdmin ? <AdminDashboard /> : <Navigate to="/login" />}
@@ -113,13 +110,11 @@ export default function App() {
             <Route path="/admin/orders/:id" element={<OrderDetails />} />
 
 
-            {/* Add real edit route */}
             <Route
               path="/admin/products/edit/:id"
               element={isAdmin ? <EditProduct /> : <Navigate to="/login" />}
             />
 
-            {/* fallback */}
             <Route path="*" element={<Navigate to={isAdmin ? "/admin" : "/"} />} />
           </Routes>
         </div>

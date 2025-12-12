@@ -7,28 +7,28 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Routes Import (✨all imports here✨)
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
-const orderRoutes = require("./routes/orderRoutes"); // 👈 ADD THIS HERE
+const orderRoutes = require("./routes/orderRoutes");
+const cartRoutes = require("./routes/cartRoutes");
+const wishlistRoutes = require("./routes/wishlistRoutes");
+app.use("/api/wishlist", wishlistRoutes);
 
-// Test route
+
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-// Mount routes (✨after imports✨)
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
-app.use("/api/orders", orderRoutes); // 👈 NOW IT IS SAFE
+app.use("/api/orders", orderRoutes);
+app.use("/api/cart", cartRoutes);
 
-// DB Connection
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.log("MongoDB Error", err));
 
-// Start Server
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:5001`);

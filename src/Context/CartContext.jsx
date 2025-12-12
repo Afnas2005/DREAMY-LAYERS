@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
 
 const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
@@ -16,100 +17,105 @@ export const CartProvider = ({ children }) => {
 
     if (storedUser && isAuth) {
       setUser(storedUser);
-      loadUserData(storedUser);
+      loadFromDatabase(storedUser._id);
     }
   }, []);
 
-  const loadUserData = (user) => {
-    const storedCart = JSON.parse(localStorage.getItem(`cart_${user.email}`)) || [];
-    const storedWishlist = JSON.parse(localStorage.getItem(`wishlist_${user.email}`)) || [];
-    const storedOrders = JSON.parse(localStorage.getItem(`orders_${user.email}`)) || [];
-    setCart(storedCart);
-    setWishlist(storedWishlist);
-    setOrders(storedOrders);
-  };
+  const loadFromDatabase = async (userId) => {
+    try {
+      const cartRes = await axios.get(
+        `http://localhost:5001/api/cart/${userId}`
+      );
+      const wishlistRes = await axios.get(
+        `http://localhost:5001/api/wishlist/${userId}`
+      );
 
-  useEffect(() => {
-    if (user) localStorage.setItem(`cart_${user.email}`, JSON.stringify(cart));
-  }, [cart, user]);
-
-  useEffect(() => {
-    if (user) localStorage.setItem(`wishlist_${user.email}`, JSON.stringify(wishlist));
-  }, [wishlist, user]);
-
-  useEffect(() => {
-    if (user) localStorage.setItem(`orders_${user.email}`, JSON.stringify(orders));
-  }, [orders, user]);
-
-  const addToCart = (product) => {
-    setCart((prev) => {
-      const existing = prev.find((p) => p._id === product._id);
-      if (existing) {
-        return prev.map((p) =>
-          p._id === product._id ? { ...p, quantity: p.quantity + 1 } : p
-        );
-      }
-      return [...prev, { ...product, quantity: 1 }];
-    });
-  };
-
-  const removeFromCart = (id) =>
-    setCart((prev) => prev.filter((p) => p._id !== id));
-
-  const increaseQuantity = (id) =>
-    setCart((prev) =>
-      prev.map((p) =>
-        p._id === id ? { ...p, quantity: p.quantity + 1 } : p
-      )
-    );
-
-  const decreaseQuantity = (id) =>
-    setCart((prev) =>
-      prev.map((p) =>
-        p._id === id && p.quantity > 1
-          ? { ...p, quantity: p.quantity - 1 }
-          : p
-      )
-    );
-
-  const addToWishlist = (product) =>
-    setWishlist((prev) =>
-      prev.find((p) => p._id === product._id) ? prev : [...prev, product]
-    );
-
-  const removeFromWishlist = (id) =>
-    setWishlist((prev) => prev.filter((p) => p._id !== id));
-
-  const addOrder = (orderItems) => {
-    const newOrder = {
-      id: Date.now(),
-      date: new Date().toISOString(),
-      items: orderItems,
-      total: orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
-      status: "Pending"
-    };
-
-    setOrders((prev) => [...prev, newOrder]);
-    clearCart();
-  };
-
-  // ⭐ FIX — proper clear cart
-  const clearCart = () => {
-    setCart([]);
-    if (user) {
-      localStorage.removeItem(`cart_${user.email}`);
+      setCart(cartRes.data.items || []);
+      setWishlist(wishlistRes.data.items || []);
+    } catch (err) {
+      console.error("Failed loading data", err);
     }
   };
 
+  const addToCart = async (product) => {
+    if (!user) return;
+    const res = await axios.post(
+      `http://localhost:5001/api/cart/${user._id}`,
+      { product }
+    );
+    setCart(res.data);
+  };
+
+  const removeFromCart = async (id) => {
+    if (!user) return;
+    const res = await axios.delete(
+      `http://localhost:5001/api/cart/${user._id}/${id}`
+    );
+    setCart(res.data);
+  };
+
+  const increaseQuantity = async (id) => {
+    if (!user) return;
+    const res = await axios.post(
+      `http://localhost:5001/api/cart/${user._id}`,
+      { product: { _id: id } }
+    );
+    setCart(res.data);
+  };
+
+  const decreaseQuantity = async (id) => {
+    if (!user) return;
+    const res = await axios.put(
+      `http://localhost:5001/api/cart/${user._id}/decrease`,
+      { productId: id }
+    );
+    setCart(res.data);
+  };
+
+  const clearCart = async () => {
+    if (!user) return;
+    setCart([]);
+    await axios.delete(`http://localhost:5001/api/cart/${user._id}/all`);
+  };
+
+  const addToWishlist = async (product) => {
+    if (!user) return;
+    const res = await axios.post(
+      `http://localhost:5001/api/wishlist/${user._id}`,
+      { product }
+    );
+    setWishlist(res.data);
+  };
+
+  const removeFromWishlist = async (id) => {
+    if (!user) return;
+    const res = await axios.delete(
+      `http://localhost:5001/api/wishlist/${user._id}/${id}`
+    );
+    setWishlist(res.data);
+  };
+
+  const addOrder = (items) => {
+    const newOrder = {
+      id: Date.now(),
+      date: new Date().toISOString(),
+      items,
+      total: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+      status: "Pending",
+    };
+    setOrders((prev) => [...prev, newOrder]);
+    setCart([]);
+  };
+
   const resetCartAndWishlist = () => {
-    clearCart();
+    setCart([]);
     setWishlist([]);
   };
 
-  const setCurrentUser = (newUser) => {
+  const setCurrentUser = async (newUser) => {
     setUser(newUser);
     if (newUser) {
-      loadUserData(newUser);
+      loadFromDatabase(newUser._id);
     } else {
       resetCartAndWishlist();
       setOrders([]);
@@ -130,8 +136,8 @@ export const CartProvider = ({ children }) => {
         decreaseQuantity,
         addToWishlist,
         removeFromWishlist,
+        clearCart,
         addOrder,
-        clearCart,   // << ⭐ NOW AVAILABLE
         resetCartAndWishlist,
         setCurrentUser,
         user,

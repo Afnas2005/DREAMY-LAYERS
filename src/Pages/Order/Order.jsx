@@ -3,7 +3,7 @@ import axios from "axios";
 
 export default function Order() {
   const [orders, setOrders] = useState([]);
-  const user = JSON.parse(localStorage.getItem("user")); // 👍 FIX
+  const user = JSON.parse(localStorage.getItem("user")); 
 
   useEffect(() => {
     if (!user?._id) return;

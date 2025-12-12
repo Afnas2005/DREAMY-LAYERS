@@ -44,7 +44,6 @@ export default function AdminOrders() {
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-6">
 
-      {/* ⭐⭐ Back Button Inserted Here ⭐⭐ */}
       <button
         onClick={() => navigate("/admin")}
         className="mb-6 flex items-center gap-2 text-pink-600 font-medium 
@@ -54,7 +53,6 @@ export default function AdminOrders() {
         <ArrowLeft className="h-4 w-4" />
         Back to Dashboard
       </button>
-      {/* ⭐⭐ End of Back Button ⭐⭐ */}
 
       <h2 className="text-3xl font-bold mb-8 text-gray-800 tracking-tight">
         Manage Orders
@@ -66,7 +64,6 @@ export default function AdminOrders() {
             key={order._id}
             className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300"
           >
-            {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 flex items-center mb-1">
@@ -88,10 +85,8 @@ export default function AdminOrders() {
               </Link>
             </div>
 
-            {/* Divider */}
             <div className="border-t my-4"></div>
 
-            {/* Items Preview */}
             <div className="flex gap-3 overflow-x-auto pb-2">
               {order?.items?.slice(0, 4).map((item, idx) => (
                 <img
@@ -103,7 +98,6 @@ export default function AdminOrders() {
               ))}
             </div>
 
-            {/* Footer */}
             <div className="mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between">
               <div className="text-gray-700 font-semibold text-lg">
                 ₹{order.total}
