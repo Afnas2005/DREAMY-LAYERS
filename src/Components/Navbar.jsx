@@ -133,7 +133,7 @@ export default function Navbar({ isAuthenticated, setIsAuthenticated }) {
                 }`}
               >
                 <ShoppingCart className="h-5 w-5" />
-                <span>Cart ({cart?.length || 0})</span>
+                <span>Cart </span>
                 {cart?.length > 0 && (
                   <span className="absolute -top-2 -right-2 bg-pink-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center animate-bounce">
                     {cart.length}
@@ -150,7 +150,7 @@ export default function Navbar({ isAuthenticated, setIsAuthenticated }) {
                 }`}
               >
                 <Heart className="h-5 w-5" />
-                <span>Wishlist ({wishlist?.length || 0})</span>
+                <span>Wishlist</span>
                 {wishlist?.length > 0 && (
                   <span className="absolute -top-2 -right-2 bg-pink-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
                     {wishlist.length}

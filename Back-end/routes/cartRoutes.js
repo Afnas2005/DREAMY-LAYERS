@@ -45,7 +45,11 @@ router.put("/:userId/decrease", async (req, res) => {
 
 router.delete("/:userId/:productId", async (req, res) => {
   let cart = await Cart.findOne({ userId: req.params.userId });
-  cart.items = cart.items.filter(i => i.productId != req.params.productId);
+
+  cart.items = cart.items.filter(
+    (i) => i.productId.toString() !== req.params.productId
+  );
+
   await cart.save();
   res.json(cart.items);
 });

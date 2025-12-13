@@ -13,36 +13,36 @@ export default function Payment() {
   const { cart, clearCart } = useCart();
 
   const handlePayment = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    try {
-      await axios.post("http://localhost:5001/api/orders", {
-        userId: user._id,
-        name,
-        phone,
-        shippingAddress: address,
-        items: cart,
-        total: cart.reduce(
-          (sum, item) => sum + item.price * item.quantity,
-          0
-        ),
-        paymentMethod,
-        status: "Pending",
-        date: new Date(),
-      });
-
-      clearCart();
-
-      toast.success("Order placed successfully 🎉");
-      navigate("/order");
-
-    } catch (error) {
-      console.error("Order submit failed", error);
-      toast.error("Order failed!");
+  try {
+await axios.post(
+  "http://localhost:5001/api/orders",
+  {
+    name,
+    phone,
+    shippingAddress: address,
+    paymentMethod,
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
     }
-  };
+  }
+);
+
+
+    clearCart(); // UI clear only
+
+    toast.success("Order placed successfully 🎉");
+    navigate("/order");
+
+  } catch (error) {
+    console.error("Order submit failed", error);
+    toast.error("Order failed!");
+  }
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
@@ -111,12 +111,16 @@ export default function Payment() {
 
         <div className="mb-6 p-4 bg-gray-50 rounded-lg">
           <h3 className="font-semibold text-gray-800 mb-2">Order Summary</h3>
-          {cart.map(item => (
-            <div key={item.id} className="flex justify-between text-sm text-gray-600">
-              <span>{item.name} x{item.quantity}</span>
-              <span>${(item.price * item.quantity).toFixed(2)}</span>
-            </div>
-          ))}
+         {cart.map(item => (
+  <div
+    key={item._id}   // ✅ correct
+    className="flex justify-between text-sm text-gray-600"
+  >
+    <span>{item.name} x{item.quantity}</span>
+    <span>${(item.price * item.quantity).toFixed(2)}</span>
+  </div>
+))}
+
           <div className="border-t border-gray-200 mt-2 pt-2 font-semibold">
             Total: ${cart.reduce(
               (sum, item) => sum + item.price * item.quantity,

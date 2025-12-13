@@ -49,7 +49,7 @@ const Products = () => {
 
   if (loading) {
     return (
-      <div className="text-center py-10 text-lg font-medium text-gray-600 animate-pulse">
+      <div className="min-h-screen flex items-center justify-center bg-[#fff4e4] text-center py-10 text-lg font-medium text-amber-700 animate-pulse">
         Loading products...
       </div>
     );
@@ -57,101 +57,166 @@ const Products = () => {
 
   if (error) {
     return (
-      <div className="text-center py-10 text-red-500 font-medium">{error}</div>
+      <div className="min-h-screen flex items-center justify-center bg-[#fff4e4] text-center py-10 text-red-500 font-medium">
+        {error}
+      </div>
     );
   }
 
-  const categories = ["All", "Cake", "Cookies", "Brownies", "Cup Cake", "Drinks"];
+  const categories = [
+    "All",
+    "Cake",
+    "Cookies",
+    "Brownies",
+    "Cup Cake",
+    "Drinks",
+  ];
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-10">
-      <h2 className="text-3xl font-bold mb-8 text-gray-800 animate-fade-in-up">
-        Products
-      </h2>
-
-      <div className="mb-6 relative">
-        <input
-          type="text"
-          placeholder="Search products..."
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            setShowSuggestions(true);
-          }}
-          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-          className="w-full border p-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all duration-300"
-        />
-        {showSuggestions && suggestions.length > 0 && (
-          <ul className="absolute w-full bg-white border rounded-lg shadow-md mt-1 z-10 max-h-60 overflow-y-auto animate-fade-in-up">
-            {suggestions.map((item) => (
-              <li
-                key={item.id}
-                onClick={() => {
-                  setSearchQuery(item.name);
-                  setShowSuggestions(false);
-                }}
-                className="p-2 cursor-pointer hover:bg-pink-100 transition-colors duration-200"
-              >
-                {item.name}
-              </li>
-            ))}
-          </ul>
-        )}
+    <div >
+      {/* subtle warm background */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,#ffe7c2,transparent_55%),radial-gradient(circle_at_bottom_right,#ffe0b3,transparent_55%)] opacity-80" />
       </div>
 
-      <div className="flex flex-wrap gap-3 mb-8">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setSelectedCategory(cat)}
-            className={`px-4 py-2 rounded-full text-sm font-medium shadow-md transition-all duration-300 ${
-              selectedCategory === cat
-                ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white transform scale-105"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
+      {/* main content container */}
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-10">
+        <h2 className="text-3xl font-extrabold mb-6 text-amber-800 tracking-wide">
+          Dessert Menu
+        </h2>
 
-      {filteredProducts.length === 0 ? (
-        <p className="text-gray-600 animate-fade-in">No products found.</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {filteredProducts.map((product) => (
-            <div
-              key={product.id}
-              className="bg-white p-4 rounded-xl shadow-lg group hover:shadow-2xl hover:scale-105 transition-transform duration-300 animate-fade-in-up"
-            >
-              <img
-                src={product.image}
-                alt={product.name || "Product"}
-                onClick={() => navigate(`/products/${product.id}`)}
-                className="w-full h-52 object-cover rounded-lg mb-4 cursor-pointer transform group-hover:rotate-2 transition duration-500"
-              />
-              <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
-              <p className="text-lg font-bold text-pink-600 mb-2">₹{product.price}</p>
-              <div className="flex gap-2">
-              <button onClick={() => addToCart(product)} className="w-full bg-pink-500 text-white py-2 rounded-lg hover:bg-pink-600 shadow-md transition transform hover:scale-105"
-              >
-                 Add to Cart
-                  </button>
-                <button
-                  onClick={() => addToWishlist(product)}
-                  className="w-full bg-yellow-500 text-white py-2 rounded-lg hover:bg-yellow-600 shadow-md transition transform hover:scale-105"
+        {/* search box */}
+        <div className="mb-6 relative">
+          <input
+            type="text"
+            placeholder="Search desserts..."
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setShowSuggestions(true);
+            }}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+            className="w-full border border-amber-100 bg-white/95 text-sm text-amber-900 placeholder:text-amber-300 p-3 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-transparent transition-all duration-300"
+          />
+          {showSuggestions && suggestions.length > 0 && (
+            <ul className="absolute w-full bg-white border border-amber-100 rounded-3xl shadow-lg mt-2 z-10 max-h-60 overflow-y-auto">
+              {suggestions.map((item) => (
+                <li
+                  key={item.id}
+                  onClick={() => {
+                    setSearchQuery(item.name);
+                    setShowSuggestions(false);
+                  }}
+                  className="px-4 py-2 cursor-pointer hover:bg-amber-50 text-sm"
                 >
-                  Add to Wishlist
-                </button>
-              </div>
-            </div>
+                  {item.name}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {/* category pills */}
+        <div className="flex flex-wrap gap-2 sm:gap-3 mb-8">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium shadow-sm transition-all duration-300 border ${
+                selectedCategory === cat
+                  ? "bg-amber-500 text-white border-amber-500 shadow-amber-200 scale-105"
+                  : "bg-white/95 text-amber-700 border-amber-100 hover:bg-amber-50"
+              }`}
+            >
+              {cat}
+            </button>
           ))}
         </div>
-      )}
+
+        {/* product cards */}
+        {filteredProducts.length === 0 ? (
+          <p className="text-amber-600">No products found.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {filteredProducts.map((product) => (
+              <div
+                key={product.id}
+                className="bg-white rounded-[30px] shadow-md border border-amber-100 overflow-hidden flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              >
+                {/* image */}
+                <button
+                  type="button"
+                  onClick={() => navigate(`/products/${product.id}`)}
+                  className="relative block overflow-hidden rounded-[30px_30px_0_0]"
+                >
+                  <img
+                    src={product.image}
+                    alt={product.name || "Product"}
+                    className="w-full h-56 object-cover transform hover:scale-105 transition duration-500"
+                  />
+                </button>
+
+                {/* content */}
+                <div className="flex-1 px-5 pt-4 pb-5 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-base font-semibold text-amber-900 mb-1">
+                      {product.name}
+                    </h3>
+                    <p className="text-xs text-amber-400 leading-snug line-clamp-2 mb-3">
+                      A delightful dessert made with love. Customize this text
+                      later with real description.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="text-sm font-semibold text-amber-900">
+                      ₹{product.price}
+                    </span>
+
+                    <div className="flex items-center gap-2">
+                      {/* wishlist icon button */}
+                      <button
+                        type="button"
+                        onClick={() => addToWishlist(product)}
+                        className="w-8 h-8 inline-flex items-center justify-center rounded-full bg-white border border-amber-200 text-amber-400 text-sm shadow-sm hover:bg-amber-50 hover:text-amber-500 transition-colors"
+                      >
+                        ♥
+                      </button>
+
+                      {/* cart icon button */}
+                      <button
+                        type="button"
+                        onClick={() => addToCart(product)}
+                        className="w-8 h-8 inline-flex items-center justify-center rounded-full bg-white border border-amber-200 text-amber-500 text-sm shadow-sm hover:bg-amber-50 hover:text-amber-600 transition-colors"
+                      >
+                        🛒
+                      </button>
+
+                      {/* arrow button (kept as in previous design) */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          addToCart(product);
+                          addToWishlist(product);
+                        }}
+                        className="w-9 h-9 inline-flex items-center justify-center rounded-full bg-amber-400 text-white text-lg shadow hover:bg-amber-500 transition-colors"
+                      >
+                        →
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-10">
+          <Footer />
+        </div>
+      </div>
     </div>
   );
 };
 
-
 export default Products;
-
