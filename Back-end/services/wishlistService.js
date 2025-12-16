@@ -12,7 +12,13 @@ exports.add = async (userId, product) => {
       items: [{ ...product, productId: product._id }],
     });
   } else {
-    wishlist.items.push({ ...product, productId: product._id });
+    const existingItem = wishlist.items.find(
+      (item) => item.productId.toString() === product._id.toString()
+    );
+
+    if (!existingItem) {
+      wishlist.items.push({ ...product, productId: product._id });
+    }
   }
 
   await wishlist.save();

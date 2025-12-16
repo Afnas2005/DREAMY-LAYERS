@@ -12,7 +12,6 @@ const {
 router.post("/register", register);
 router.post("/login", login);
 
-// Admin / Protected
 router.get("/", auth, getUsers);
 router.put("/block/:id", auth, blockUser);
 router.put("/unblock/:id", auth, unblockUser);

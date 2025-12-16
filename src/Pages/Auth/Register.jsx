@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function RegisterPage({ setIsAuthenticated }) {
   const [form, setForm] = useState({
@@ -45,17 +46,32 @@ export default function RegisterPage({ setIsAuthenticated }) {
       password
     });
 
+    toast.success("Account created successfully! 🎉 Please login to continue.", {
+      duration: 4000,
+      style: {
+        background: '#10B981',
+        color: '#fff',
+      },
+    });
+
     setSuccess(true);
     setTimeout(() => {
       navigate("/login");
     }, 1500);
 
   } catch (err) {
+    let errorMessage = "Something went wrong!";
     if (err.response && err.response.data.message === "User already exists") {
-      setError("User already exists!");
-    } else {
-      setError("Something went wrong!");
+      errorMessage = "User already exists! Please try logging in.";
     }
+    setError(errorMessage);
+    toast.error(errorMessage, {
+      duration: 4000,
+      style: {
+        background: '#EF4444',
+        color: '#fff',
+      },
+    });
   } finally {
     setIsLoading(false);
   }

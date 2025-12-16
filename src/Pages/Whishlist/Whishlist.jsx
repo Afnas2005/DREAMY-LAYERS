@@ -1,18 +1,41 @@
 import React, { useContext } from "react";
 import { CartContext } from "../../Context/CartContext";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function Wishlist() {
   const { wishlist, removeFromWishlist, addToCart } = useContext(CartContext);
 
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
 
-  const handleMoveToCart = (item) => {
+  const handleMoveToCart = async (item) => {
     if (!isAuthenticated) return;
 
-    const cartItem = { ...item, quantity: 1 };
-    addToCart(cartItem);
-    removeFromWishlist(item._id); 
+    try {
+      const cartItem = { 
+        ...item, 
+        _id: item.productId || item._id, 
+        quantity: 1 
+      };
+      await addToCart(cartItem);
+      await removeFromWishlist(item._id || item.productId);
+      toast.success(`${item.name} moved to cart! 🛒`, {
+        duration: 3000,
+        style: {
+          background: '#10B981',
+          color: '#fff',
+        },
+      });
+    } catch (error) {
+      console.error("Error moving item to cart:", error);
+      toast.error("Failed to move item to cart. Please try again.", {
+        duration: 3000,
+        style: {
+          background: '#EF4444',
+          color: '#fff',
+        },
+      });
+    }
   };
 
   const handleRemoveFromWishlist = (id) => {

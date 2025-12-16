@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   ArrowLeft,
   Save,
@@ -73,13 +74,29 @@ export default function EditProduct() {
         ...product
       });
 
+      toast.success("Product updated successfully! ✨", {
+        duration: 3000,
+        style: {
+          background: '#10B981',
+          color: '#fff',
+        },
+      });
+
       setSuccess(true);
       setTimeout(() => {
         navigate("/admin/products");
       }, 1000);
     } catch (err) {
       console.error("Error updating product:", err);
-      setError("Update failed. Check console for details.");
+      const errorMessage = "Update failed. Check console for details.";
+      setError(errorMessage);
+      toast.error(errorMessage, {
+        duration: 4000,
+        style: {
+          background: '#EF4444',
+          color: '#fff',
+        },
+      });
     } finally {
       setSaving(false);
     }
@@ -122,7 +139,6 @@ export default function EditProduct() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 py-12 px-4">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
         <div className="mb-8">
           <button
             onClick={() => navigate("/admin/products")}
@@ -143,9 +159,7 @@ export default function EditProduct() {
           </div>
         </div>
 
-        {/* Main Form Card */}
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
-          {/* Success Banner */}
           {success && (
             <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-4 flex items-center justify-center gap-2 text-white animate-pulse">
               <Check className="w-5 h-5" />
@@ -153,7 +167,6 @@ export default function EditProduct() {
             </div>
           )}
 
-          {/* Error Banner */}
           {error && (
             <div className="bg-gradient-to-r from-red-50 to-pink-50 border-l-4 border-red-500 p-4 m-6 rounded-lg">
               <p className="text-red-700 font-medium">{error}</p>
@@ -162,7 +175,6 @@ export default function EditProduct() {
 
           <form onSubmit={handleSave} className="p-8 space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
-              {/* Product Name */}
               <div className="md:col-span-2">
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                   <Package className="w-4 h-4 text-purple-500" />
@@ -177,7 +189,6 @@ export default function EditProduct() {
                 />
               </div>
 
-              {/* Price */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                   <DollarSign className="w-4 h-4 text-green-500" />
@@ -196,7 +207,6 @@ export default function EditProduct() {
                 </div>
               </div>
 
-              {/* Category */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                   <Tag className="w-4 h-4 text-blue-500" />
@@ -211,7 +221,6 @@ export default function EditProduct() {
                 />
               </div>
 
-              {/* Image URL */}
               <div className="md:col-span-2">
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                   <Image className="w-4 h-4 text-pink-500" />
@@ -239,7 +248,6 @@ export default function EditProduct() {
                 )}
               </div>
 
-              {/* Description */}
               <div className="md:col-span-2">
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                   <FileText className="w-4 h-4 text-indigo-500" />
@@ -255,7 +263,6 @@ export default function EditProduct() {
               </div>
             </div>
 
-            {/* Submit Buttons */}
             <div className="flex gap-4 pt-4">
               <button
                 type="button"
@@ -293,7 +300,6 @@ export default function EditProduct() {
           </form>
         </div>
 
-        {/* Footer Tip */}
         <div className="mt-6 text-center text-sm text-gray-500">
           <p>💡 Tip: Changes will be visible immediately after saving</p>
         </div>

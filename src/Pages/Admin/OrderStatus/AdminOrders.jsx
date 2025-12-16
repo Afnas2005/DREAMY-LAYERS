@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   Package,
   Calendar,
@@ -49,12 +50,25 @@ export default function AdminOrders() {
     try {
       await axios.put(`http://localhost:5001/api/orders/${id}/status`, { status });
       fetchOrders();
+      toast.success(`Order status updated to ${status}! ✅`, {
+        duration: 3000,
+        style: {
+          background: '#10B981',
+          color: '#fff',
+        },
+      });
     } catch (err) {
       console.error("Error updating order:", err);
+      toast.error("Failed to update order status. Please try again.", {
+        duration: 4000,
+        style: {
+          background: '#EF4444',
+          color: '#fff',
+        },
+      });
     }
   };
 
-  // Filter and sort orders
   const filteredOrders = orders
     .filter(order => {
       const matchesSearch = order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -77,7 +91,6 @@ export default function AdminOrders() {
       }
     });
 
-  // Calculate statistics
   const totalOrders = orders.length;
   const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0);
   const pendingOrders = orders.filter(order => order.status === "Pending").length;
@@ -119,7 +132,6 @@ export default function AdminOrders() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-yellow-50 p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
         <div className="bg-white rounded-3xl shadow-2xl p-8 mb-8 animate-fade-in">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
             <div>
@@ -151,7 +163,6 @@ export default function AdminOrders() {
             </div>
           </div>
 
-          {/* Statistics Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="bg-gradient-to-r from-pink-500 to-pink-600 text-white p-6 rounded-2xl shadow-lg">
               <div className="flex items-center justify-between">
@@ -192,7 +203,6 @@ export default function AdminOrders() {
           </div>
         </div>
 
-        {/* Filters and Search */}
         <div className="bg-white rounded-2xl shadow-xl p-6 mb-8">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
@@ -230,7 +240,6 @@ export default function AdminOrders() {
           </div>
         </div>
 
-        {/* Orders List */}
         {filteredOrders.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-3xl shadow-2xl animate-fade-in">
             <div className="bg-gradient-to-r from-pink-100 to-purple-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">

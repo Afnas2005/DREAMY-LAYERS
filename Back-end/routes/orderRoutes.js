@@ -7,16 +7,16 @@ const {
   getUserOrders,
   getAll,
   updateStatus,
+  cancelOrder,
 } = require("../controllers/orderControl");
 router.post("/", auth, create);
 
-// Get orders for a user
 router.get("/user/:userId", auth, getUserOrders);
 
-// Admin: get all orders
 router.get("/", auth, getAll);
 
-// Admin: update status
 router.put("/:id/status", auth, updateStatus);
+
+router.put("/:id/cancel", auth, cancelOrder);
 
 module.exports = router;

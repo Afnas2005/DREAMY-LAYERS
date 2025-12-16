@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 import { Edit3, Trash2, Plus, Package, RefreshCw, Search, Filter, Star, TrendingUp, Eye, DollarSign } from "lucide-react";
 
 export default function AdminProducts() {
@@ -35,13 +36,25 @@ export default function AdminProducts() {
     try {
       await axios.delete(`http://localhost:5001/api/products/${id}`);
       await fetchProducts();
+      toast.success("Product deleted successfully! 🗑️", {
+        duration: 3000,
+        style: {
+          background: '#10B981',
+          color: '#fff',
+        },
+      });
     } catch (e) {
       console.error("Delete failed", e);
-      alert("Delete failed. See console for details.");
+      toast.error("Failed to delete product. Please try again.", {
+        duration: 4000,
+        style: {
+          background: '#EF4444',
+          color: '#fff',
+        },
+      });
     }
   };
 
-  // Filter and sort products
   const filteredProducts = products
     .filter(product => {
       const matchesSearch = product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -79,7 +92,6 @@ export default function AdminProducts() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-yellow-50 p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
         <div className="bg-white rounded-3xl shadow-2xl p-8 mb-8 animate-fade-in">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
             <div>
@@ -109,7 +121,6 @@ export default function AdminProducts() {
             </div>
           </div>
 
-          {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="bg-gradient-to-r from-pink-500 to-pink-600 text-white p-6 rounded-2xl shadow-lg">
               <div className="flex items-center justify-between">
@@ -150,7 +161,6 @@ export default function AdminProducts() {
           </div>
         </div>
 
-        {/* Filters and Search */}
         <div className="bg-white rounded-2xl shadow-xl p-6 mb-8">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">

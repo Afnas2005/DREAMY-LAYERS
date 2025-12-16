@@ -7,7 +7,6 @@ router.get("/", async (req, res) => {
   res.json(products);
 });
 
-// Get single product
 router.get("/:id", async (req, res) => {
   const product = await Product.findById(req.params.id);
   if (!product) {
@@ -16,13 +15,11 @@ router.get("/:id", async (req, res) => {
   res.json(product);
 });
 
-// Add product (admin)
 router.post("/", auth, async (req, res) => {
   const product = await Product.create(req.body);
   res.status(201).json(product);
 });
 
-// Update product
 router.put("/:id", auth, async (req, res) => {
   const product = await Product.findByIdAndUpdate(
     req.params.id,
@@ -32,7 +29,6 @@ router.put("/:id", auth, async (req, res) => {
   res.json(product);
 });
 
-// Delete product
 router.delete("/:id", auth, async (req, res) => {
   await Product.findByIdAndDelete(req.params.id);
   res.json({ message: "Deleted" });

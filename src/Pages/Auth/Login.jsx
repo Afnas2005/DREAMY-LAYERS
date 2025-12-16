@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { Cake, Eye, EyeOff, Sparkles, Heart, Lock, Mail } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 import { CartContext } from "../../Context/CartContext";
 
 export default function Login({ setIsAuthenticated }) {
@@ -40,6 +41,14 @@ const handleSubmit = async (e) => {
 
     setSubmitted(true);
 
+    toast.success(`Welcome back, ${user.name}! 🎉`, {
+      duration: 3000,
+      style: {
+        background: '#10B981',
+        color: '#fff',
+      },
+    });
+
     if (user.role === "admin") {
       navigate("/admin", { replace: true });
     } else {
@@ -48,7 +57,15 @@ const handleSubmit = async (e) => {
 
   } catch (err) {
     setSubmitted(false);
-    setError(err.response?.data?.message || "Invalid email or password");
+    const errorMessage = err.response?.data?.message || "Invalid email or password";
+    setError(errorMessage);
+    toast.error(errorMessage, {
+      duration: 4000,
+      style: {
+        background: '#EF4444',
+        color: '#fff',
+      },
+    });
   }
 };
 

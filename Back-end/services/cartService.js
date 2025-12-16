@@ -1,7 +1,8 @@
 const Cart = require("../models/Cart");
 
 exports.get = async (userId) => {
-  return (await Cart.findOne({ userId })) || { items: [] };
+  const cart = await Cart.findOne({ userId });
+  return cart || { items: [] };
 };
 
 exports.add = async (userId, product) => {
@@ -27,6 +28,11 @@ exports.add = async (userId, product) => {
 
 exports.remove = async (userId, productId) => {
   const cart = await Cart.findOne({ userId });
+  
+  if (!cart) {
+    return [];
+  }
+  
   cart.items = cart.items.filter(
     (i) => i.productId.toString() !== productId
   );
@@ -36,6 +42,11 @@ exports.remove = async (userId, productId) => {
 
 exports.decrease = async (userId, productId) => {
   const cart = await Cart.findOne({ userId });
+  
+  if (!cart) {
+    return [];
+  }
+  
   const item = cart.items.find(
     (i) => i.productId.toString() === productId
   );

@@ -1,12 +1,7 @@
 const Razorpay = require("razorpay");
 
-/**
- * CREATE RAZORPAY ORDER (TEST MODE)
- * POST /api/payment/create-order
- */
 exports.createRazorpayOrder = async (req, res) => {
   try {
-    // amount should come from frontend (in rupees)
     const { amount } = req.body;
 
     if (!amount) {
@@ -19,7 +14,7 @@ exports.createRazorpayOrder = async (req, res) => {
     });
 
     const options = {
-      amount: amount * 100, // Razorpay works in paise
+      amount: amount * 100,
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
     };

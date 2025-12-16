@@ -77,7 +77,6 @@ export default function ProductDetails() {
 
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
           <div className="md:flex">
-            {/* Product Image Section */}
             <div className="md:w-1/2 p-8 bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center">
               <div className="relative">
                 <img
@@ -91,7 +90,6 @@ export default function ProductDetails() {
               </div>
             </div>
 
-            {/* Product Details Section */}
             <div className="md:w-1/2 p-8">
               <div className="mb-6">
                 <h1 className="text-4xl font-bold text-gray-800 mb-2 bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
@@ -130,7 +128,6 @@ export default function ProductDetails() {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="space-y-4">
                 <button
                   onClick={handleAddToCart}
@@ -157,7 +154,6 @@ export default function ProductDetails() {
                 </button>
               </div>
 
-              {/* Features */}
               <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-xl">
                   <Truck className="text-blue-500" size={24} />
@@ -185,7 +181,6 @@ export default function ProductDetails() {
           </div>
         </div>
 
-        {/* Additional Information */}
         <div className="mt-8 bg-white rounded-3xl shadow-xl p-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Why Choose Our {product.name}?</h2>
           <div className="grid md:grid-cols-2 gap-6">

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { Package, DollarSign, Image, Tag, FileText, Sparkles, Check } from "lucide-react";
 
 export default function AddProduct() {
@@ -36,13 +37,29 @@ export default function AddProduct() {
 
       await axios.post("http://localhost:5001/api/products", payload);
 
+      toast.success("Product added successfully! 🎉", {
+        duration: 3000,
+        style: {
+          background: '#10B981',
+          color: '#fff',
+        },
+      });
+
       setSuccess(true);
       setTimeout(() => {
         navigate("/admin/products");
       }, 1000);
     } catch (err) {
       console.error("Error adding product:", err);
-      setError("Failed to add product. Check console for details.");
+      const errorMessage = "Failed to add product. Check console for details.";
+      setError(errorMessage);
+      toast.error(errorMessage, {
+        duration: 4000,
+        style: {
+          background: '#EF4444',
+          color: '#fff',
+        },
+      });
     } finally {
       setLoading(false);
     }
@@ -51,7 +68,6 @@ export default function AddProduct() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 py-12 px-4">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl mb-4 shadow-lg">
             <Sparkles className="w-8 h-8 text-white" />
@@ -62,9 +78,7 @@ export default function AddProduct() {
           <p className="text-gray-600">Create something amazing for your customers</p>
         </div>
 
-        {/* Main Form Card */}
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
-          {/* Success Banner */}
           {success && (
             <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-4 flex items-center justify-center gap-2 text-white animate-pulse">
               <Check className="w-5 h-5" />
@@ -72,7 +86,6 @@ export default function AddProduct() {
             </div>
           )}
 
-          {/* Error Banner */}
           {error && (
             <div className="bg-gradient-to-r from-red-50 to-pink-50 border-l-4 border-red-500 p-4 m-6 rounded-lg">
               <p className="text-red-700 font-medium">{error}</p>
@@ -81,7 +94,6 @@ export default function AddProduct() {
 
           <form onSubmit={handleSave} className="p-8 space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
-              {/* Product Name */}
               <div className="md:col-span-2">
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                   <Package className="w-4 h-4 text-purple-500" />
@@ -97,7 +109,6 @@ export default function AddProduct() {
                 />
               </div>
 
-              {/* Price */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                   <DollarSign className="w-4 h-4 text-green-500" />
@@ -118,7 +129,6 @@ export default function AddProduct() {
                 </div>
               </div>
 
-              {/* Category */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                   <Tag className="w-4 h-4 text-blue-500" />
@@ -133,7 +143,6 @@ export default function AddProduct() {
                 />
               </div>
 
-              {/* Image URL */}
               <div className="md:col-span-2">
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                   <Image className="w-4 h-4 text-pink-500" />
@@ -157,7 +166,6 @@ export default function AddProduct() {
                 )}
               </div>
 
-              {/* Description */}
               <div className="md:col-span-2">
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                   <FileText className="w-4 h-4 text-indigo-500" />
@@ -174,7 +182,6 @@ export default function AddProduct() {
               </div>
             </div>
 
-            {/* Submit Button */}
             <div className="flex gap-4 pt-4">
               <button
                 type="button"
@@ -209,7 +216,6 @@ export default function AddProduct() {
           </form>
         </div>
 
-        {/* Footer Tip */}
         <div className="mt-6 text-center text-sm text-gray-500">
           <p>💡 Tip: Use high-quality images for better customer engagement</p>
         </div>

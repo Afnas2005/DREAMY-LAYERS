@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function Order() {
   const [orders, setOrders] = useState([]);
@@ -27,10 +28,24 @@ export default function Order() {
         `http://localhost:5001/api/orders/${orderId}/cancel`
       );
 
+      toast.success("Order cancelled successfully! ❌", {
+        duration: 3000,
+        style: {
+          background: '#10B981',
+          color: '#fff',
+        },
+      });
 
       fetchOrders();
     } catch (err) {
       console.error("Error cancelling order:", err);
+      toast.error("Failed to cancel order. Please try again.", {
+        duration: 3000,
+        style: {
+          background: '#EF4444',
+          color: '#fff',
+        },
+      });
     }
   };
 

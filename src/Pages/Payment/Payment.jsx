@@ -17,7 +17,6 @@ export default function Payment() {
   e.preventDefault();
 
   if (paymentMethod === "cod") {
-    // existing COD logic (works already)
    await axios.post(
   "http://localhost:5001/api/orders",
   {
@@ -35,13 +34,18 @@ export default function Payment() {
   }
 );
 
-
     await clearCart();
+    toast.success("Order placed successfully! 🎉 Your delicious treats are on the way.", {
+      duration: 5000,
+      style: {
+        background: '#10B981',
+        color: '#fff',
+      },
+    });
     navigate("/order");
     return;
   }
 
-  // 🔥 RAZORPAY FLOW
   const res = await loadRazorpay();
   if (!res) {
     alert("Razorpay SDK failed to load");
@@ -81,6 +85,13 @@ const options = {
     );
 
     await clearCart();
+    toast.success("Payment successful! 🎉 Your delicious treats are on the way.", {
+      duration: 5000,
+      style: {
+        background: '#10B981',
+        color: '#fff',
+      },
+    });
     navigate("/order");
   },
 };
@@ -106,10 +117,8 @@ const loadRazorpay = () => {
     <div className="min-h-screen ">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left section - Checkout Form */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-3xl shadow-lg p-8">
-              {/* Header with back button */}
               <div className="flex items-center gap-4 mb-8">
                 <button 
                   onClick={() => navigate(-1)}
@@ -123,7 +132,6 @@ const loadRazorpay = () => {
               </div>
 
               <form onSubmit={handlePayment} className="space-y-8">
-                {/* 1. Contact Information */}
                 <div>
                   <h2 className="text-lg font-semibold text-gray-800 mb-4">1. Contact information</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -157,7 +165,6 @@ const loadRazorpay = () => {
                   </div>
                 </div>
 
-                {/* 2. Delivery method */}
                 <div>
                   <h2 className="text-lg font-semibold text-gray-800 mb-4">2. Delivery method</h2>
                   <div>
@@ -175,7 +182,6 @@ const loadRazorpay = () => {
                   </div>
                 </div>
 
-                {/* 3. Payment method */}
                 <div>
                   <h2 className="text-lg font-semibold text-gray-800 mb-4">3. Payment method</h2>
                   <div className="grid grid-cols-2 gap-4">
@@ -244,17 +250,14 @@ const loadRazorpay = () => {
             </div>
           </div>
 
-          {/* Right section - Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-3xl shadow-lg p-8 sticky top-6">
               <h3 className="text-2xl font-bold text-gray-900 mb-6">Order</h3>
               
-              {/* Cart Items */}
               <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
                 {cart.map(item => (
                   <div key={item._id} className="bg-gray-50 rounded-2xl p-4">
                     <div className="flex gap-4">
-                      {/* Product Image */}
                       <div className="w-20 h-20 bg-white rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
                         {item.image ? (
                           <img 
@@ -284,7 +287,6 @@ const loadRazorpay = () => {
                 ))}
               </div>
 
-              {/* Summary */}
               <div className="space-y-3 mb-6 pb-6 border-b border-gray-200">
                 <div className="flex justify-between text-gray-600">
                   <span className="uppercase text-xs font-medium">Subtotal</span>
@@ -298,7 +300,6 @@ const loadRazorpay = () => {
                 </div>
               </div>
 
-              {/* Total */}
               <div className="flex justify-between items-center mb-6">
                 <span className="text-lg font-bold text-gray-900">TOTAL</span>
                 <span className="text-3xl font-bold text-gray-900">
@@ -306,7 +307,6 @@ const loadRazorpay = () => {
                 </span>
               </div>
 
-              {/* Checkout Button */}
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -325,7 +325,6 @@ const loadRazorpay = () => {
                 )}
               </button>
 
-              {/* Terms */}
               <div className="mt-4 flex items-start gap-2">
                 <input
                   type="checkbox"

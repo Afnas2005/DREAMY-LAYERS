@@ -1,12 +1,8 @@
 const Order = require("../models/Order");
 
-/**
- * CREATE ORDER
- * POST /api/orders
- */
+
 exports.create = async (req, res) => {
   try {
-    // 🔐 userId comes from JWT (auth middleware)
     const userId = req.user.id;
 
     const {
@@ -18,7 +14,6 @@ exports.create = async (req, res) => {
       phone,
     } = req.body;
 
-    // ❗ basic validation
     if (!items || items.length === 0) {
       return res.status(400).json({ message: "Order items are required" });
     }
@@ -44,13 +39,9 @@ exports.create = async (req, res) => {
   }
 };
 
-/**
- * GET ORDERS FOR LOGGED-IN USER
- * GET /api/orders/user/:userId
- */
+
 exports.getUserOrders = async (req, res) => {
   try {
-    // 🔒 user can only access his own orders
     if (req.user.id !== req.params.userId) {
       return res.status(403).json({ message: "Access denied" });
     }
@@ -68,13 +59,9 @@ exports.getUserOrders = async (req, res) => {
   }
 };
 
-/**
- * ADMIN – GET ALL ORDERS
- * GET /api/orders
- */
+
 exports.getAll = async (req, res) => {
   try {
-    // 🔐 admin check
     if (req.user.role !== "admin") {
       return res.status(403).json({ message: "Admin access required" });
     }
@@ -93,13 +80,9 @@ exports.getAll = async (req, res) => {
   }
 };
 
-/**
- * ADMIN – UPDATE ORDER STATUS
- * PUT /api/orders/:id/status
- */
+
 exports.updateStatus = async (req, res) => {
   try {
-    // 🔐 admin check
     if (req.user.role !== "admin") {
       return res.status(403).json({ message: "Admin access required" });
     }
@@ -121,6 +104,38 @@ exports.updateStatus = async (req, res) => {
     console.error("UPDATE STATUS ERROR:", error);
     res.status(500).json({
       message: "Failed to update order status",
+      error: error.message,
+    });
+  }
+};
+
+exports.cancelOrder = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const userId = req.user.id;
+
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    if (order.userId.toString() !== userId) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    if (order.status !== "Pending") {
+      return res.status(400).json({ message: "Order cannot be cancelled" });
+    }
+
+    order.status = "Cancelled";
+    await order.save();
+
+    res.json(order);
+  } catch (error) {
+    console.error("CANCEL ORDER ERROR:", error);
+    res.status(500).json({
+      message: "Failed to cancel order",
       error: error.message,
     });
   }

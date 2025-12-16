@@ -3,7 +3,7 @@ import { CartContext } from "../../Context/CartContext";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Cart() {
-  const { cart, removeFromCart, increaseQuantity, decreaseQuantity } =
+  const { cart, removeFromCart, increaseQuantity, decreaseQuantity, clearCart } =
     useContext(CartContext);
   const navigate = useNavigate();
 
@@ -61,6 +61,17 @@ export default function Cart() {
     removeFromCart(id);
   };
 
+  const handleClearCart = () => {
+    if (!isAuthenticated) return;
+    if (window.confirm("Are you sure you want to clear your entire cart?")) {
+      clearCart();
+    }
+  };
+
+  const handleContinueShopping = () => {
+    navigate("/products");
+  };
+
   return (
     <div className="min-h-screen py-10 px-4">
       <div className="max-w-6xl mx-auto">
@@ -100,7 +111,7 @@ export default function Cart() {
                       <div className="inline-flex items-center rounded-full border border-gray-200 bg-white">
                         <button
                           onClick={() =>
-                            handleQuantityChange(item._id, "decrease")
+                            handleQuantityChange(item.productId, "decrease")
                           }
                           className="px-3 py-1 text-gray-500 hover:text-gray-700"
                         >
@@ -111,7 +122,7 @@ export default function Cart() {
                         </span>
                         <button
                           onClick={() =>
-                            handleQuantityChange(item._id, "increase")
+                            handleQuantityChange(item.productId, "increase")
                           }
                           className="px-3 py-1 text-gray-500 hover:text-gray-700"
                         >
@@ -127,7 +138,7 @@ export default function Cart() {
 
                 <div className="flex flex-col justify-between items-end px-4 py-4 border-l border-orange-50 min-w-[90px]">
                   <button
-                    onClick={() => handleRemoveItem(item._id)}
+                    onClick={() => handleRemoveItem(item.productId)}
                     className="text-gray-300 hover:text-red-500 text-xl leading-none"
                   >
                     ×
@@ -169,12 +180,15 @@ export default function Cart() {
               Proceed to Checkout
             </button>
 
-            <button className="mt-3 w-full py-3 rounded-lg bg-[#ffe3db] text-[#c0392b] text-sm font-semibold border border-[#ffc9bb] hover:bg-[#ffd6cb] transition">
+            <button
+              onClick={handleClearCart}
+              className="mt-3 w-full py-3 rounded-lg bg-[#ffe3db] text-[#c0392b] text-sm font-semibold border border-[#ffc9bb] hover:bg-[#ffd6cb] transition"
+            >
               Clear Cart
             </button>
 
             <button
-              type="button"
+              onClick={handleContinueShopping}
               className="mt-3 w-full py-3 rounded-lg bg-white text-gray-700 text-sm font-semibold border border-gray-200 hover:bg-orange-50/60 transition"
             >
               Continue Shopping
