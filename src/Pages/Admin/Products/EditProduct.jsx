@@ -9,7 +9,9 @@ import {
   DollarSign,
   Tag,
   FileText,
-  Edit
+  Edit,
+  Check,
+  Sparkles
 } from "lucide-react";
 
 export default function EditProduct() {
@@ -19,6 +21,7 @@ export default function EditProduct() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const [product, setProduct] = useState({
     name: "",
@@ -63,13 +66,17 @@ export default function EditProduct() {
     e.preventDefault();
     setSaving(true);
     setError("");
+    setSuccess(false);
 
     try {
       await axios.put(`http://localhost:5001/api/products/${id}`, {
         ...product
       });
 
-      navigate("/admin/products");
+      setSuccess(true);
+      setTimeout(() => {
+        navigate("/admin/products");
+      }, 1000);
     } catch (err) {
       console.error("Error updating product:", err);
       setError("Update failed. Check console for details.");
@@ -80,24 +87,32 @@ export default function EditProduct() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 flex justify-center items-center">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl mb-4 shadow-lg animate-pulse">
+            <Sparkles className="w-8 h-8 text-white" />
+          </div>
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-200 border-t-purple-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600 font-medium">Loading product...</p>
+        </div>
       </div>
     );
   }
 
-  if (!loading && error) {
+  if (!loading && error && !product.name) {
     return (
-      <div className="max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow-lg mt-20">
-        <p className="text-red-600 mb-4 text-center font-semibold">
-          {error}
-        </p>
-        <div className="flex justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 flex justify-center items-center px-4">
+        <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-3xl">⚠️</span>
+          </div>
+          <h3 className="text-xl font-bold text-gray-800 mb-2">Oops!</h3>
+          <p className="text-red-600 mb-6 font-medium">{error}</p>
           <button
             onClick={() => navigate("/admin/products")}
-            className="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-300"
+            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-pink-700 shadow-lg transition-all transform hover:scale-[1.02]"
           >
-            Back
+            Back to Products
           </button>
         </div>
       </div>
@@ -105,139 +120,184 @@ export default function EditProduct() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow-lg">
-      <div className="flex items-center mb-6">
-        <button
-          onClick={() => navigate("/admin/products")}
-          className="flex items-center text-pink-600 hover:text-pink-700 mr-4 transition-colors duration-200"
-        >
-          <ArrowLeft className="h-5 w-5 mr-1" />
-          Back
-        </button>
-        <h2 className="text-2xl font-bold text-gray-800 flex items-center">
-          <Edit className="h-6 w-6 mr-2 text-pink-500" />
-          Edit Product
-        </h2>
-      </div>
-
-      <form onSubmit={handleSave} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 py-12 px-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <button
+            onClick={() => navigate("/admin/products")}
+            className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 font-semibold mb-4 transition-colors group"
+          >
+            <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+            Back to Products
+          </button>
           
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-              <Package className="h-4 w-4 mr-2 text-pink-500" />
-              Product Name
-            </label>
-            <input
-              name="name"
-              value={product.name}
-              onChange={handleChange}
-              className="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all duration-300"
-              required
-            />
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl mb-4 shadow-lg">
+              <Edit className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+              Edit Product
+            </h1>
+            <p className="text-gray-600">Update your product details</p>
           </div>
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-              <DollarSign className="h-4 w-4 mr-2 text-pink-500" />
-              Price
-            </label>
-            <input
-              type="number"
-              name="price"
-              value={product.price}
-              onChange={handleChange}
-              className="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all duration-300"
-              required
-            />
-          </div>
+        {/* Main Form Card */}
+        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
+          {/* Success Banner */}
+          {success && (
+            <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-4 flex items-center justify-center gap-2 text-white animate-pulse">
+              <Check className="w-5 h-5" />
+              <span className="font-semibold">Product updated successfully! Redirecting...</span>
+            </div>
+          )}
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-              <Tag className="h-4 w-4 mr-2 text-pink-500" />
-              Category
-            </label>
-            <input
-              name="category"
-              value={product.category}
-              onChange={handleChange}
-              className="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all duration-300"
-              placeholder="Cakes, Pastries, Cookies..."
-            />
-          </div>
+          {/* Error Banner */}
+          {error && (
+            <div className="bg-gradient-to-r from-red-50 to-pink-50 border-l-4 border-red-500 p-4 m-6 rounded-lg">
+              <p className="text-red-700 font-medium">{error}</p>
+            </div>
+          )}
 
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-              <Image className="h-4 w-4 mr-2 text-pink-500" />
-              Image URL
-            </label>
-            <input
-              name="image"
-              value={product.image}
-              onChange={handleChange}
-              className="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all duration-300"
-              placeholder="https://…"
-              required
-            />
-            {product.image && (
-              <div className="mt-3">
-                <p className="text-sm text-gray-600 mb-2">Image Preview:</p>
-                <img
-                  src={product.image}
-                  alt="preview"
-                  className="h-48 w-full object-cover rounded-xl border border-gray-200"
-                  onError={(e) => {
-                    e.target.src =
-                      "https://via.placeholder.com/300x200.png?text=No+Image";
-                  }}
+          <form onSubmit={handleSave} className="p-8 space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Product Name */}
+              <div className="md:col-span-2">
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                  <Package className="w-4 h-4 text-purple-500" />
+                  Product Name
+                </label>
+                <input
+                  name="name"
+                  value={product.name}
+                  onChange={handleChange}
+                  className="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all outline-none"
+                  required
                 />
               </div>
-            )}
-          </div>
 
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-              <FileText className="h-4 w-4 mr-2 text-pink-500" />
-              Description
-            </label>
-            <textarea
-              name="description"
-              value={product.description}
-              onChange={handleChange}
-              className="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all duration-300"
-              rows={4}
-            />
-          </div>
+              {/* Price */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                  <DollarSign className="w-4 h-4 text-green-500" />
+                  Price
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">₹</span>
+                  <input
+                    type="number"
+                    name="price"
+                    value={product.price}
+                    onChange={handleChange}
+                    className="w-full border-2 border-gray-200 rounded-xl p-3 pl-8 focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Category */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                  <Tag className="w-4 h-4 text-blue-500" />
+                  Category
+                </label>
+                <input
+                  name="category"
+                  value={product.category}
+                  onChange={handleChange}
+                  className="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
+                  placeholder="Cakes, Pastries, Cookies..."
+                />
+              </div>
+
+              {/* Image URL */}
+              <div className="md:col-span-2">
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                  <Image className="w-4 h-4 text-pink-500" />
+                  Image URL
+                </label>
+                <input
+                  name="image"
+                  value={product.image}
+                  onChange={handleChange}
+                  className="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-pink-500 focus:ring-4 focus:ring-pink-100 transition-all outline-none"
+                  placeholder="https://…"
+                  required
+                />
+                {product.image && (
+                  <div className="mt-4 rounded-2xl overflow-hidden border-4 border-gray-100 shadow-lg">
+                    <img
+                      src={product.image}
+                      alt="preview"
+                      className="w-full h-64 object-cover"
+                      onError={(e) => {
+                        e.target.src = "https://via.placeholder.com/300x200.png?text=No+Image";
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Description */}
+              <div className="md:col-span-2">
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                  <FileText className="w-4 h-4 text-indigo-500" />
+                  Description
+                </label>
+                <textarea
+                  name="description"
+                  value={product.description}
+                  onChange={handleChange}
+                  className="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all outline-none resize-none"
+                  rows={4}
+                />
+              </div>
+            </div>
+
+            {/* Submit Buttons */}
+            <div className="flex gap-4 pt-4">
+              <button
+                type="button"
+                onClick={() => navigate("/admin/products")}
+                className="px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={saving || success}
+                className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-pink-700 disabled:opacity-60 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                {saving ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Saving Changes...
+                  </span>
+                ) : success ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Check className="w-5 h-5" />
+                    Changes Saved!
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    <Save className="w-5 h-5" />
+                    Save Changes
+                  </span>
+                )}
+              </button>
+            </div>
+          </form>
         </div>
 
-        <div className="flex gap-4">
-          <button
-            type="button"
-            onClick={() => navigate("/admin/products")}
-            className="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-300"
-          >
-            Cancel
-          </button>
-
-          <button
-            type="submit"
-            disabled={saving}
-            className="flex items-center px-6 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl shadow-lg hover:shadow-xl disabled:opacity-60 transition-all duration-300 transform hover:-translate-y-0.5"
-          >
-            {saving ? (
-              <>
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                Saving...
-              </>
-            ) : (
-              <>
-                <Save className="h-5 w-5 mr-2" />
-                Save Changes
-              </>
-            )}
-          </button>
+        {/* Footer Tip */}
+        <div className="mt-6 text-center text-sm text-gray-500">
+          <p>💡 Tip: Changes will be visible immediately after saving</p>
         </div>
-      </form>
+      </div>
     </div>
   );
 }

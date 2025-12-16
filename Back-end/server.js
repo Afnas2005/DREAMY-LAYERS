@@ -19,10 +19,15 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
+const paymentRoutes = require("./routes/paymentRoutes");
+app.use("/api/payment", paymentRoutes);
+
+
 app.use("/api/users", userRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api/orders", orderRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/wishlist", wishlistRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/products", productRoutes);
 
 mongoose
   .connect(process.env.MONGO_URI)

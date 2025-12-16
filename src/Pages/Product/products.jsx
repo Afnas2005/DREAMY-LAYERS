@@ -74,18 +74,15 @@ const Products = () => {
 
   return (
     <div >
-      {/* subtle warm background */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,#ffe7c2,transparent_55%),radial-gradient(circle_at_bottom_right,#ffe0b3,transparent_55%)] opacity-80" />
       </div>
 
-      {/* main content container */}
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-10">
         <h2 className="text-3xl font-extrabold mb-6 text-amber-800 tracking-wide">
           Dessert Menu
         </h2>
 
-        {/* search box */}
         <div className="mb-6 relative">
           <input
             type="text"
@@ -102,7 +99,7 @@ const Products = () => {
             <ul className="absolute w-full bg-white border border-amber-100 rounded-3xl shadow-lg mt-2 z-10 max-h-60 overflow-y-auto">
               {suggestions.map((item) => (
                 <li
-                  key={item.id}
+                  key={item._id}
                   onClick={() => {
                     setSearchQuery(item.name);
                     setShowSuggestions(false);
@@ -116,7 +113,6 @@ const Products = () => {
           )}
         </div>
 
-        {/* category pills */}
         <div className="flex flex-wrap gap-2 sm:gap-3 mb-8">
           {categories.map((cat) => (
             <button
@@ -133,20 +129,18 @@ const Products = () => {
           ))}
         </div>
 
-        {/* product cards */}
         {filteredProducts.length === 0 ? (
           <p className="text-amber-600">No products found.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {filteredProducts.map((product) => (
               <div
-                key={product.id}
+                key={product._id}
                 className="bg-white rounded-[30px] shadow-md border border-amber-100 overflow-hidden flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
               >
-                {/* image */}
                 <button
                   type="button"
-                  onClick={() => navigate(`/products/${product.id}`)}
+                  onClick={() => navigate(`/products/${product._id}`)}
                   className="relative block overflow-hidden rounded-[30px_30px_0_0]"
                 >
                   <img
@@ -156,7 +150,6 @@ const Products = () => {
                   />
                 </button>
 
-                {/* content */}
                 <div className="flex-1 px-5 pt-4 pb-5 flex flex-col justify-between">
                   <div>
                     <h3 className="text-base font-semibold text-amber-900 mb-1">
@@ -174,7 +167,6 @@ const Products = () => {
                     </span>
 
                     <div className="flex items-center gap-2">
-                      {/* wishlist icon button */}
                       <button
                         type="button"
                         onClick={() => addToWishlist(product)}
@@ -183,7 +175,6 @@ const Products = () => {
                         ♥
                       </button>
 
-                      {/* cart icon button */}
                       <button
                         type="button"
                         onClick={() => addToCart(product)}
@@ -192,7 +183,6 @@ const Products = () => {
                         🛒
                       </button>
 
-                      {/* arrow button (kept as in previous design) */}
                       <button
                         type="button"
                         onClick={() => {

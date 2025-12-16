@@ -22,7 +22,7 @@ export default function Wishlist() {
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
-      <h2 className="text-4xl font-bold mb-8 text-pink-600 text-center animate-fade-in-up">
+      <h2 className="text-4xl font-bold mb-8 text-3xl font-extrabold mb-4 text-[#9b4a0f]">
         Your Wishlist
       </h2>
 
@@ -55,20 +55,20 @@ export default function Wishlist() {
                 />
                 <div>
                   <span className="font-semibold text-lg">{item.name}</span>
-                  <p className="text-pink-600 font-bold">${item.price}</p>
+                  <p className=" text-[#c0392b] font-bold">${item.price}</p>
                 </div>
               </div>
 
               <div className="flex gap-3 mt-3 sm:mt-0">
                 <button
                   onClick={() => handleMoveToCart(item)}
-                  className="bg-gradient-to-r from-pink-500 to-pink-600 text-white px-4 py-2 rounded-full font-medium shadow-md hover:scale-105 transform transition-all duration-300"
+                  className="bg-gradient-to-r bg-[#ffe3db] text-[#c0392b] text-sm font-semibold border border-[#ffc9bb] hover:bg-[#ffd6cb] transition rounded-full font-medium shadow-md hover:scale-105 transform transition-all duration-300"
                 >
                   Move to Cart
                 </button>
                 <button
                   onClick={() => handleRemoveFromWishlist(item._id)}
-                  className="text-red-500 hover:text-red-700 font-semibold"
+                  className=" text-[#c0392b] hover:text-red-700 font-semibold"
                 >
                   Remove
                 </button>

@@ -5,7 +5,6 @@ export default function Order() {
   const [orders, setOrders] = useState([]);
   const user = JSON.parse(localStorage.getItem("user"));
 
-  // Fetch orders (unchanged)
   const fetchOrders = async () => {
     try {
       const res = await axios.get(
@@ -22,17 +21,13 @@ export default function Order() {
     fetchOrders();
   }, [user]);
 
-  // FINAL FIX: Cancel order re-fetch only (no local state override)
   const handleCancelOrder = async (orderId) => {
     try {
       await axios.put(
         `http://localhost:5001/api/orders/${orderId}/cancel`
       );
 
-      // ❗ Removed the manual state update
-      // Because backend was sending old data and overwriting it
 
-      // ✅ Correct → always fetch latest updated order from backend
       fetchOrders();
     } catch (err) {
       console.error("Error cancelling order:", err);
@@ -78,7 +73,6 @@ export default function Order() {
                   key={order._id}
                   className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden"
                 >
-                  {/* Header */}
                   <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-b border-gray-200">
                     <div>
                       <p className="text-sm font-semibold text-gray-700">
@@ -113,7 +107,6 @@ export default function Order() {
                     </div>
                   </div>
 
-                  {/* Items */}
                   <div className="px-6 py-4">
                     <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
                       <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 text-gray-600 text-xs">
@@ -155,7 +148,6 @@ export default function Order() {
                     </div>
                   </div>
 
-                  {/* Bottom Actions */}
                   <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-3 bg-gray-50 border-t border-gray-200">
                     <div className="flex items-center text-sm text-gray-600">
                       <span
