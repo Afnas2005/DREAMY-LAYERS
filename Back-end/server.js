@@ -3,9 +3,9 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
-const app = express();   // 👈 1. create app FIRST
+const app = express();
 
-// 👇 2. ADD CORS CONFIG HERE (EXACTLY HERE)
+// ===== CORS CONFIG (SAFE) =====
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
@@ -15,29 +15,32 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
-      // allow requests with no origin (Postman, server-to-server)
       if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
+        return callback(null, true);
       }
+
+      return callback(new Error("Not allowed by CORS"));
     },
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
   })
 );
 
-// 👇 3. Preflight support (MUST)
-app.options("*", cors());
+// ✅ SAFE preflight handler (NO wildcard)
+app.use((req, res, next) => {
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+  next();
+});
 
-// 👇 4. Body parser
+// ===== BODY PARSER =====
 app.use(express.json());
 
-
-// ================= ROUTES =================
+// ===== ROUTES =====
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
 const cartRoutes = require("./routes/cartRoutes");
@@ -56,13 +59,13 @@ app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payment", paymentRoutes);
 
-// ================= DATABASE =================
+// ===== DATABASE =====
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.log("MongoDB Error:", err));
 
-// ================= SERVER =================
+// ===== SERVER =====
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
