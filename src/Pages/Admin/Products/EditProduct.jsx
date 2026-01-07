@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../tokenApi/setupAxios";
 import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
@@ -38,7 +38,7 @@ export default function EditProduct() {
       setLoading(true);
 
       try {
-        const res = await axios.get(`http://localhost:5001/api/products/${id}`);
+        const res = await api.get(`/api/products/${id}`);
         const data = res.data;
 
         setProduct({
@@ -70,7 +70,7 @@ export default function EditProduct() {
     setSuccess(false);
 
     try {
-      await axios.put(`http://localhost:5001/api/products/${id}`, {
+      await api.put(`/api/products/${id}`, {
         ...product
       });
 

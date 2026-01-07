@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../tokenApi/setupAxios";
 import { Cake, IceCream2, Truck, Heart, ShoppingCart, Star, ArrowRight, Plus, ChevronRight, Clock, Shield, Award, Users, Smile } from "lucide-react";
 import Footer from "../../Components/Footer";
 import { CartContext } from "../../Context/CartContext";
@@ -14,7 +14,7 @@ const Home = ({ isAuthenticated, setIsAuthenticated }) => {
   const { cart, addToCart, clearCart } = useContext(CartContext);
 
  useEffect(() => {
-  axios.get("http://localhost:5001/api/products")
+  api.get("/api/products")
     .then(res => setProducts(res.data))
     .catch(err => console.error(err));
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
+import api from "../../tokenApi/setupAxios";
 import { CartContext } from "../../Context/CartContext";
 import { useNavigate } from "react-router-dom";
 import Footer from "../../Components/Footer";
@@ -15,8 +15,8 @@ const Products = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5001/api/products")
+    api
+      .get("/api/products")
       .then((res) => {
         setProducts(res.data || []);
         setLoading(false);

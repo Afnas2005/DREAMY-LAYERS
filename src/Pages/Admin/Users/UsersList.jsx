@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from "../../../tokenApi/setupAxios";
 import { 
   Users, 
   Eye, 
@@ -25,7 +25,7 @@ export default function UsersList() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5001/api/users");
+      const res = await api.get("/api/users");
       setUsers(res.data);
     } catch (err) {
       console.error(err);
@@ -41,9 +41,9 @@ export default function UsersList() {
   const toggleBlock = async (_id, isBlocked) => {
     try {
       if (isBlocked) {
-        await axios.put(`http://localhost:5001/api/users/unblock/${_id}`);
+        await api.put(`/api/users/unblock/${_id}`);
       } else {
-        await axios.put(`http://localhost:5001/api/users/block/${_id}`);
+        await api.put(`/api/users/block/${_id}`);
       }
       fetchUsers();
     } catch (err) {

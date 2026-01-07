@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../tokenApi/setupAxios";
 import { CartContext } from "../../Context/CartContext";
 import { ArrowLeft, Heart, ShoppingCart, Star, Truck, Shield, RefreshCw } from "lucide-react";
 
@@ -16,7 +16,7 @@ export default function ProductDetails() {
   const { addToCart, addToWishlist } = useContext(CartContext);
 
   useEffect(() => {
-    axios.get(`http://localhost:5001/api/products/${id}`)
+    api.get(`/api/products/${id}`)
       .then(res => {
         setProduct(res.data);
       })

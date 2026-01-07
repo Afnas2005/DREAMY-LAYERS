@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../tokenApi/setupAxios";
 import toast from "react-hot-toast";
 
 export default function RegisterPage({ setIsAuthenticated }) {
@@ -40,7 +40,7 @@ export default function RegisterPage({ setIsAuthenticated }) {
   }
 
   try {
-    await axios.post("http://localhost:5001/api/users/register", {
+    await api.post("/api/users/register", {
       name,
       email,
       password

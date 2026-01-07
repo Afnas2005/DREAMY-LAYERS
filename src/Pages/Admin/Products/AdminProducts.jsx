@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from "../../../tokenApi/setupAxios";
 import toast from "react-hot-toast";
 import { Edit3, Trash2, Plus, Package, RefreshCw, Search, Filter, Star, TrendingUp, Eye, DollarSign } from "lucide-react";
 
@@ -16,7 +16,7 @@ export default function AdminProducts() {
     setLoading(true);
     setError("");
     try {
-      const res = await axios.get("http://localhost:5001/api/products");
+      const res = await api.get("/api/products");
       setProducts(Array.isArray(res.data) ? res.data : []);
     } catch (e) {
       console.error("Failed to load products", e);
@@ -34,7 +34,7 @@ export default function AdminProducts() {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
 
     try {
-      await axios.delete(`http://localhost:5001/api/products/${id}`);
+      await api.delete(`/api/products/${id}`);
       await fetchProducts();
       toast.success("Product deleted successfully! 🗑️", {
         duration: 3000,

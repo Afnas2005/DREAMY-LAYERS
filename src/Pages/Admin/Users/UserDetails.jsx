@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../../tokenApi/setupAxios";
 import { ArrowLeft, Package, ShoppingCart, User, Mail, Calendar } from "lucide-react";
 
 export default function UserDetails() {
@@ -15,10 +15,10 @@ export default function UserDetails() {
       try {
         setLoading(true);
         
-        const userResponse = await axios.get(`http://localhost:5001/api/users/${id}`);
+        const userResponse = await api.get(`/api/users/${id}`);
         setUser(userResponse.data);
 
-        const ordersResponse = await axios.get(`http://localhost:5001/api/orders`);
+        const ordersResponse = await api.get(`/api/orders`);
         
         const userOrders = ordersResponse.data.filter(order => 
           order.userId === id || order.userId === parseInt(id) || 

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
+import api from "../tokenApi/setupAxios";
 import toast from "react-hot-toast";
 
 const CartContext = createContext();
@@ -11,6 +11,7 @@ export const CartProvider = ({ children }) => {
   const [orders, setOrders] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState(null);
+
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -24,17 +25,33 @@ export const CartProvider = ({ children }) => {
 
   const loadFromDatabase = async (userId) => {
     try {
-      const cartRes = await axios.get(
-        `http://localhost:5001/api/cart/${userId}`
+      const cartRes = await api.get(
+        `/api/cart/${userId}`
       );
-      const wishlistRes = await axios.get(
-        `http://localhost:5001/api/wishlist/${userId}`
+      const wishlistRes = await api.get(
+        `/api/wishlist/${userId}`
       );
 
       setCart(cartRes.data.items || []);
       setWishlist(wishlistRes.data.items || []);
     } catch (err) {
       console.error("Failed loading data", err);
+      if (err.response && err.response.status === 401) {
+        // Token invalid, logout
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        localStorage.setItem("isAuthenticated", "false");
+        setUser(null);
+        setCart([]);
+        setWishlist([]);
+        toast.error("Session expired. Please login again.", {
+          duration: 3000,
+          style: {
+            background: '#EF4444',
+            color: '#fff',
+          },
+        });
+      }
     }
   };
 
@@ -50,8 +67,8 @@ export const CartProvider = ({ children }) => {
       return;
     }
     try {
-      const res = await axios.post(
-        `http://localhost:5001/api/cart/${user._id}`,
+      const res = await api.post(
+        `/api/cart/${user._id}`,
         { product }
       );
       setCart(res.data);
@@ -76,8 +93,8 @@ export const CartProvider = ({ children }) => {
 const removeFromCart = async (id) => {
   if (!user) return;
   try {
-    const res = await axios.delete(
-      `http://localhost:5001/api/cart/${user._id}/${id}`
+    const res = await api.delete(
+      `/api/cart/${user._id}/${id}`
     );
 
     if (Array.isArray(res.data)) {
@@ -97,8 +114,8 @@ const removeFromCart = async (id) => {
 
   const increaseQuantity = async (id) => {
     if (!user) return;
-    const res = await axios.post(
-      `http://localhost:5001/api/cart/${user._id}`,
+    const res = await api.post(
+      `/api/cart/${user._id}`,
       { product: { _id: id } }
     );
     setCart(res.data);
@@ -106,8 +123,8 @@ const removeFromCart = async (id) => {
 
   const decreaseQuantity = async (id) => {
     if (!user) return;
-    const res = await axios.put(
-      `http://localhost:5001/api/cart/${user._id}/decrease`,
+    const res = await api.put(
+      `/api/cart/${user._id}/decrease`,
       { productId: id }
     );
     setCart(res.data);
@@ -117,7 +134,7 @@ const removeFromCart = async (id) => {
     if (!user) return;
     try {
       setCart([]);
-      await axios.delete(`http://localhost:5001/api/cart/${user._id}/all`);
+      await api.delete(`/api/cart/${user._id}/all`);
       toast.success("Cart cleared successfully! 🗑️", {
         duration: 3000,
         style: {
@@ -165,8 +182,8 @@ const removeFromCart = async (id) => {
     }
 
     try {
-      const res = await axios.post(
-        `http://localhost:5001/api/wishlist/${user._id}`,
+      const res = await api.post(
+        `/api/wishlist/${user._id}`,
         { product }
       );
       setWishlist(res.data);
@@ -190,8 +207,8 @@ const removeFromCart = async (id) => {
 
   const removeFromWishlist = async (id) => {
     if (!user) return;
-    const res = await axios.delete(
-      `http://localhost:5001/api/wishlist/${user._id}/${id}`
+    const res = await api.delete(
+      `/api/wishlist/${user._id}/${id}`
     );
     setWishlist(res.data);
   };

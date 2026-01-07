@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../tokenApi/setupAxios";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Package, Calendar } from "lucide-react";
 
@@ -9,8 +9,8 @@ export default function OrderDetails() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:5001/api/orders/${_id}`)
+    api
+      .get(`/api/orders/${_id}`)
       .then(res => setOrder(res.data))
       .catch(err => console.error(err));
   }, [_id]);

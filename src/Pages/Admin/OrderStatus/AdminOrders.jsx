@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../tokenApi/setupAxios";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
@@ -33,7 +33,7 @@ export default function AdminOrders() {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5001/api/orders");
+      const res = await api.get("/api/orders");
       setOrders(res.data);
     } catch (err) {
       console.error("Error fetching orders:", err);
@@ -48,7 +48,7 @@ export default function AdminOrders() {
 
   const updateStatus = async (id, status) => {
     try {
-      await axios.put(`http://localhost:5001/api/orders/${id}/status`, { status });
+      await api.put(`/api/orders/${id}/status`, { status });
       fetchOrders();
       toast.success(`Order status updated to ${status}! ✅`, {
         duration: 3000,

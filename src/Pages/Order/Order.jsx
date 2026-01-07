@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../tokenApi/setupAxios";
 import toast from "react-hot-toast";
 
 export default function Order() {
@@ -8,8 +8,8 @@ export default function Order() {
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:5001/api/orders/user/${user._id}`
+      const res = await api.get(
+        `/api/orders/user/${user._id}`
       );
       setOrders(res.data);
     } catch (err) {
@@ -24,8 +24,8 @@ export default function Order() {
 
   const handleCancelOrder = async (orderId) => {
     try {
-      await axios.put(
-        `http://localhost:5001/api/orders/${orderId}/cancel`
+      await api.put(
+        `/api/orders/${orderId}/cancel`
       );
 
       toast.success("Order cancelled successfully! ❌", {

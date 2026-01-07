@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import axios from "axios";
+import api from "../../tokenApi/setupAxios";
 import { useCart } from "../../Context/CartContext";
 
 export default function Payment() {
@@ -17,8 +17,8 @@ export default function Payment() {
   e.preventDefault();
 
   if (paymentMethod === "cod") {
-   await axios.post(
-  "http://localhost:5001/api/orders",
+   await api.post(
+  "/api/orders",
   {
     items: cart,
     total: cart.reduce((sum, i) => sum + i.price * i.quantity, 0),
@@ -26,11 +26,6 @@ export default function Payment() {
     shippingAddress: address,
     name,
     phone,
-  },
-  {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
   }
 );
 
@@ -52,12 +47,9 @@ export default function Payment() {
     return;
   }
 
-  const orderRes = await axios.post(
-    "http://localhost:5001/api/payment/create-order",
-    { amount: cart.reduce((s, i) => s + i.price * i.quantity, 0) },
-    {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-    }
+  const orderRes = await api.post(
+    "/api/payment/create-order",
+    { amount: cart.reduce((s, i) => s + i.price * i.quantity, 0) }
   );
 
 const options = {
@@ -67,8 +59,8 @@ const options = {
   name: "Dreamy Layers",
   order_id: orderRes.data.id,
   handler: async function (response) {
-    await axios.post(
-      "http://localhost:5001/api/orders",
+    await api.post(
+      "/api/orders",
       {
         items: cart,
         total: cart.reduce((s, i) => s + i.price * i.quantity, 0),
@@ -76,11 +68,6 @@ const options = {
         shippingAddress: address,
         name,
         phone,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
       }
     );
 

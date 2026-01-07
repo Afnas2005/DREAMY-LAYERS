@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../../../tokenApi/setupAxios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Package, DollarSign, Image, Tag, FileText, Sparkles, Check } from "lucide-react";
@@ -35,7 +35,7 @@ export default function AddProduct() {
         category: product.category || "",
       };
 
-      await axios.post("http://localhost:5001/api/products", payload);
+      await api.post("/api/products", payload);
 
       toast.success("Product added successfully! 🎉", {
         duration: 3000,

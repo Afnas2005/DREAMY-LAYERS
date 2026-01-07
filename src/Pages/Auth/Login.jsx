@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Cake, Eye, EyeOff, Sparkles, Heart, Lock, Mail } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import api from "../../tokenApi/setupAxios";
 import toast from "react-hot-toast";
 import { CartContext } from "../../Context/CartContext";
 
@@ -26,7 +26,7 @@ const handleSubmit = async (e) => {
   setSubmitted(false);
 
   try {
-    const res = await axios.post("http://localhost:5001/api/users/login", {
+    const res = await api.post("/api/users/login", {
       email: form.email,
       password: form.password,
     });
@@ -76,8 +76,8 @@ const handleSubmit = async (e) => {
     setForgotMsg("");
 
     try {
-      const res = await axios.get(
-        `http://localhost:5001/api/users?email=${forgotEmail}`
+      const res = await api.get(
+        `/api/users?email=${forgotEmail}`
       );
       if (res.data.length > 0) {
         setForgotMsg(
